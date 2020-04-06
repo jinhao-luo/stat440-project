@@ -143,6 +143,22 @@ sim_Y <- function(X, beta0, beta1) {
   sapply(X, function(x) rpois(1, exp(beta0+beta1*x)))
 }
 
-X <- bm_sim(0, 1, 0.1, 1000)
-sim_Y(X,1,2)
+# X <- bm_sim(0, 1, 0.1, 1000)
+# sim_Y(X,1,2)
+
+# assume theta_hat, likelihood can be obtained from parameter inferences
+mu
+sigma
+dt
+n_obs
+beta0_list <- list()
+beta1_list <- list()
+
+X_bm <- bm_sim(mu, sigma, dt, mu)
+for (i in 1:length(beta0_list)) {
+  Y_bm <- sim_Y(X, beta0_list[i], beta1_list[i])
+  # perform parameter inference for Brownian and OU
+  # compute AIC and compare
+}
+
 
