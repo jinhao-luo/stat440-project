@@ -29,7 +29,7 @@ ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0) {
   as.numeric(Xt + mu)
 }
 
-#' Negative loglikelihood for the Ornstein-Uhlenbeck model.
+#' Negative loglikelihood for the Ornstein-Uhlenbeck model Xn.
 #'
 #' @param gamma Scalar mean reversion parameter (see [ou_sim()]).
 #' @param mu Scalar mean parameter (see [ou_sim()]).
@@ -47,6 +47,22 @@ ou_nll <- function(gamma, mu, sigma, Xt, dt) {
   n <- length(Xt)
   -sum(dnorm(Xt[2:n], log = TRUE,
              mean = ou_filt * (Xt[1:(n-1)] - mu) + mu, sd = ou_sd))
+}
+
+#' Negative loglikelihood for the Ornstein-Uhlenbeck model Yn.
+#'
+#' @param gamma Scalar mean reversion parameter (see [ou_sim()]).
+#' @param mu Scalar mean parameter (see [ou_sim()]).
+#' @param sigma Scalar diffusion parameter (see [ou_sim()]).
+#' @param beta0 Scaler intercept parameter for Yt Poisson distribution
+#' @param beta1 Scaler slope parameter for Yt Poisson distribution
+#' @param Xt Vector of `n_obs` observations from the OU process.
+#' @param Yt Vector of `n_obs` observations from the OU process.
+#' @param dt Interobservation time.
+#' @return The scalar value of the loglikelihood `loglik(gamma, mu, sigma | Xt, Yt)`.
+#'
+ou_y_nll <- function(gamma, mu, sigma, b0, b1, Xt, Yt, dt) {
+  ou_nll(gamma, mu, sigma, Xt, dt)-sum(Yt*(b0+b1*Xt)-exp(b0+b1*Xt))
 }
 
 #' Generate observations from a Brownian motion with drift at regular time intervals.
@@ -143,22 +159,33 @@ sim_Y <- function(X, beta0, beta1) {
   sapply(X, function(x) rpois(1, exp(beta0+beta1*x)))
 }
 
-# X <- bm_sim(0, 1, 0.1, 1000)
-# sim_Y(X,1,2)
+b0 <- 0
+b1 <- 1
+gamma <- 1
+mu <- 2
+sigma <- 0.1
+dt <- 1
+n_obs <- 100
+X0 <- 0
+X <- ou_sim(gamma, mu, sigma, dt, n_obs, X0)
+Y <- sim_Y(X,b0,b1)
+nll <- ou_y_nll(gamma, mu, sigma, b0, b1, X, Y, dt)
+print(nll)
 
-# assume theta_hat, likelihood can be obtained from parameter inferences
-mu
-sigma
-dt
-n_obs
-beta0_list <- list()
-beta1_list <- list()
 
-X_bm <- bm_sim(mu, sigma, dt, mu)
-for (i in 1:length(beta0_list)) {
-  Y_bm <- sim_Y(X, beta0_list[i], beta1_list[i])
-  # perform parameter inference for Brownian and OU
-  # compute AIC and compare
-}
+# # assume theta_hat, likelihood can be obtained from parameter inferences
+# mu
+# sigma
+# dt
+# n_obs
+# beta0_list <- list()
+# beta1_list <- list()
+# 
+# X_bm <- bm_sim(mu, sigma, dt, mu)
+# for (i in 1:length(beta0_list)) {
+#   Y_bm <- sim_Y(X, beta0_list[i], beta1_list[i])
+#   # perform parameter inference for Brownian and OU
+#   # compute AIC and compare
+# }
 
 
