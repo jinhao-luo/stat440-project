@@ -33,9 +33,9 @@ Type objective_function<Type>::operator() () {
 
   for(int i=1;i<N;i++) {
     // Calculate mu and sigma for OU process
-    int mu_ou = mu+omega*(X[i-1]-mu);
-    int sigma_ou = tao*sqrt((1-omega*omega));
-    f += dnorm(X[i-1],mu_ou,sigma_ou,true);
+    vector<Type> mu_ou = mu+omega*(X[i-1]-mu);
+    vector<Type> sigma_ou = tao*sqrt((1-omega*omega));
+    f = f  + sum(dnorm(X[i-1],mu_ou,sigma_ou,true));
   }
   return f;
 
