@@ -33,16 +33,15 @@ Type objective_function<Type>::operator() () {
 
   Type f = sum_gamma;// Define variable that holds the return value
 
-  for(int i=1;i<N;i++) {
+  for(int i=1;i<=N;i++) {
     // Calculate mu and sigma for OU process
     vector<Type> mu_ou = mu+omega*(X[i-1]-mu);
     vector<Type> sigma_ou = tao*sqrt((1-omega*omega));
-    f = f+ sum(dnorm(X[i-1],mu_ou,sigma_ou,true));
+    f = f+ sum(dnorm(X[i],mu_ou,sigma_ou,true));
   }
   //Calculate the norm of the Hessian Matrix
   Type Norm = (H.array()*H.array()).sum();
   REPORT(Norm);
   f =f - 0.5*Norm;
-  return f;
-
+  return -f; //negative loglikelihood
 }
