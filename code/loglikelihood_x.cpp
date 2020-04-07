@@ -23,7 +23,7 @@ Type objective_function<Type>::operator() () {
   int N = X.size();
   REPORT(N);
   //this computes X * b1 + b0
-  vector<Type> x_beta1 = X*b1 +b0;
+  vector<Type> x_beta1 = -X*b1 +b0;
   REPORT(x_beta1);
   // This computes (gamma_n*(X * b1 + b0)-exp(X * b1 + b0))
   Type sum_gamma = (y* x_beta1 -exp(x_beta1)).sum();
