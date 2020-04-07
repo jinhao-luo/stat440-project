@@ -36,7 +36,7 @@ Type objective_function<Type>::operator() () {
     // Calculate mu and sigma for OU process
     vector<Type> mu_ou = mu+omega*(X[i-1]-mu);
     vector<Type> sigma_ou = tao*sqrt((1-omega*omega));
-    f = f + sum(dnorm(X[i],mu_ou,sigma_ou,true));
+    f =  f  + dnorm(X[i],mu_ou,sigma_ou,true)[0]; // todo: check later
   }
   return -f; //negative loglikelihood
 
