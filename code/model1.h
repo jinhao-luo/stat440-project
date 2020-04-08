@@ -1,20 +1,20 @@
 
   // data inputs
-  DATA_VECTOR(gamma); //OU gamma parameter
+  DATA_SCALAR(gamma); //OU gamma parameter
   DATA_VECTOR(y); // number of photons recorded
-  DATA_INTEGER(b0); // beta 0
-  DATA_INTEGER(b1); // beta 1
-  DATA_VECTOR(mu); // parameter estimated
-  DATA_VECTOR(sigma); // parameter estimated
-  DATA_INTEGER(dt); //  Time gap
+  DATA_SCALAR(b0); // beta 0
+  DATA_SCALAR(b1); // beta 1
+  DATA_SCALAR(mu); // parameter estimated
+  DATA_SCALAR(sigma); // parameter estimated
+  DATA_SCALAR(dt); //  Time gap
 
   //Parameter inputs
   PARAMETER_VECTOR(X); // donor-acceptor distance,underlying latent random variable
 
   //This compute the Omega value
-  vector<Type> omega = exp(-gamma*dt);
+  Type omega = exp(-gamma*dt);
   //This compute the tao value
-  vector<Type> tao = sigma/sqrt(2*gamma);
+  Type tao = sigma/sqrt(2*gamma);
 
   int N = X.size();
   REPORT(N);
@@ -27,11 +27,11 @@
 
   Type f; //= sum_gamma;// Define variable that holds the return value
 
-  for(int i=1;i<=N;i++) {
+  for(int i=1;i<N;i++) {
     // Calculate mu and sigma for OU process
-    vector<Type> mu_ou = mu+omega*(X[i-1]-mu);
-    vector<Type> sigma_ou = tao*sqrt((1-omega*omega));
-    f =  f  + sum(dnorm(X[i],mu_ou,sigma_ou,true)); // todo: check later
+    Type mu_ou = mu+omega*(X[i-1]-mu);
+    Type sigma_ou = tao*sqrt((1-omega*omega));
+    f =  f  + dnorm(X[i],mu_ou,sigma_ou,true); // todo: check later
   }
   return -f; //negative loglikelihood
 
