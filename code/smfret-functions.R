@@ -158,36 +158,8 @@ morse_sim <- function(gamma, alpha, mu, sigma, dt, n_obs, x0, n_sub) {
 }
 
 y_sim <- function(X, beta0, beta1) {
-  sapply(X, function(x) rpois(1, exp(beta0+beta1*x)))
+  sapply(X, function(x) rpois(1, exp(beta0-beta1*x)))
 }
 
-b0 <- 0
-b1 <- 1
-gamma <- 1
-mu <- 2
-sigma <- 0.1
-dt <- 1
-n_obs <- 100
-X0 <- 0
-X <- ou_sim(gamma, mu, sigma, dt, n_obs, X0)
-Y <- y_sim(X,b0,b1)
-nll <- ou_y_nll(gamma, mu, sigma, b0, b1, X, Y, dt)
-print(nll)
-
-
-# # assume theta_hat, likelihood can be obtained from parameter inferences
-# mu
-# sigma
-# dt
-# n_obs
-# beta0_list <- list()
-# beta1_list <- list()
-# 
-# X_bm <- bm_sim(mu, sigma, dt, mu)
-# for (i in 1:length(beta0_list)) {
-#   Y_bm <- sim_Y(X, beta0_list[i], beta1_list[i])
-#   # perform parameter inference for Brownian and OU
-#   # compute AIC and compare
-# }
 
 
