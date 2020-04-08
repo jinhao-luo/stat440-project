@@ -64,7 +64,7 @@ ou_nll <- function(gamma, mu, sigma, Xt, dt) {
 #' @return The scalar value of the loglikelihood `loglik(gamma, mu, sigma | Xt, Yt)`.
 #'
 ou_y_nll <- function(gamma, mu, sigma, b0, b1, Xt, Yt, dt) {
-  ou_nll(gamma, mu, sigma, Xt, dt)-sum(Yt*(b0+b1*Xt)-exp(b0+b1*Xt))
+  ou_nll(gamma, mu, sigma, Xt, dt)-sum(Yt*(b0-b1*Xt)-exp(b0-b1*Xt))
 }
 
 #' Generate observations from a Brownian motion with drift at regular time intervals.
