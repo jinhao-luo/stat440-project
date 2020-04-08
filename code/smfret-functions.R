@@ -17,6 +17,8 @@
 #' ```
 #' where `rho_t = exp(-gamma * t)` and `tau^2 = sigma^2/(2*gamma)`.  Its stationary distribution is `X_t ~ N(mu, tau^2)`.
 ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0) {
+  print("in ou_sim")
+  print(paste("gamma is:", gamma, mu, sigma, dt, n_obs, x0))
   tau <- sigma/sqrt(2*gamma) # stationary standard deviation
   if(missing(x0)) x0 <- rnorm(1, mean = mu, sd = tau)
   # generate efficiently using a one-step linear filter
@@ -26,7 +28,7 @@ ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0) {
   z <- rnorm(n_obs, sd = ou_sd) # pre-generate normal draws
   Xt <- filter(x = z, filter = ou_filt,
                method = "recursive", init = x0 - mu)
-  as.numeric(Xt + mu)
+  return(as.numeric(Xt + mu))
 }
 
 #' Negative loglikelihood for the Ornstein-Uhlenbeck model Xn.

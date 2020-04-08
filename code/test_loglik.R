@@ -34,11 +34,13 @@ test_out <- sapply(test_cases, function(ii) {
   beta1 <- rnorm(ii)
   dt <- sample(1:10, 1)
   n_obs <- sample(50:200, 1)
-  ntheta <- 10 # number of parameter sets per test
+  ntheta <- 1 # number of parameter sets per test
   # simulate data
   x0 <- rnorm(1, mu, sigma^2/2/gamma)
   X <- ou_sim(gamma, mu, sigma, dt, n_obs, x0) 
   Y <- y_sim(X, beta0, beta1)
+  # print(X)
+  # print(Y)
   
   nll_diff <- replicate(ntheta, expr = {
     gamma <- rnorm(ii)
@@ -48,10 +50,7 @@ test_out <- sapply(test_cases, function(ii) {
     beta1 <- rnorm(ii)
     
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
-    # DATA_MATRIX(H); // rate covariate matrix
-    
-    
-    f1 <-  MakeADFun(data=list(X=X, y=Y, dt=dt, b0=beta0, b1=beta1),parameters=list(gamma=gamma, mu=mu, sigma=sigma),DDL="loglikelihood_x")
+    f1 <-  MakeADFun(data=list(gamma=gamma, y=Y, b0=beta0, b1=beta1, mu=mu, sigma=sigma, dt=dt),parameters=list(X=X), DDL="loglikelihood_x")
     # X_hat <- nlminb(f$par,f$fn,f$gr,lower=c(-10,0.0),upper=c(10.0,10.0))["X"]   
     
     # f2 <-  MakeADFun(data=list(X=X_hat, y=Y, dt=dt, b0=b0, b1=b1),parameters=list(gamma=gamma, mu=mu, sigma=sigma),DDL="loglikelihood_inference")

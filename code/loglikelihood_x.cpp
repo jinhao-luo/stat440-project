@@ -38,8 +38,8 @@ Type objective_function<Type>::operator() () {
     f =  f  + dnorm(X[i],mu_ou,sigma_ou,true)[0]; // todo: check later
   }
   return -f; //negative loglikelihood
-
 }
+
 
 
 
