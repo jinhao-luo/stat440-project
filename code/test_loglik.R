@@ -27,9 +27,9 @@ ntheta <- 10 # number of parameter sets per test case
 
 # cycle through test cases
 test_out <- sapply(test_cases, function(ii) {
-  t_gamma <- rnorm(1, ii)
-  t_mu <- rnorm(1, ii)
-  t_sigma <- rnorm(ii)
+  t_gamma <- rexp(1, 1/ii)
+  t_mu <- rexp(1, 1/ii)
+  t_sigma <- rexp(1, 1/ii)
   beta0 <- rnorm(1, ii)
   beta1 <- rnorm(1, ii)
   # beta0 <- 1
@@ -51,7 +51,7 @@ test_out <- sapply(test_cases, function(ii) {
     
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
     
-    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,b0=beta0,b1=beta1, niter=10),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
+    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,b0=beta0,b1=beta1, niter=25),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
     nll_tmb <- f$fn()
     print(paste("nll_tmb is:", nll_tmb))
     print(paste("nll_r is:", nll_r))
