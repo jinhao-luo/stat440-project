@@ -27,41 +27,32 @@ ntheta <- 10 # number of parameter sets per test case
 
 # cycle through test cases
 test_out <- sapply(test_cases, function(ii) {
-  t_gamma <- rnorm(ii)
-  t_mu <- rnorm(ii)
+  t_gamma <- rnorm(1, ii)
+  t_mu <- rnorm(1, ii)
   t_sigma <- rnorm(ii)
-  beta0 <- rnorm(ii)
-  beta1 <- rnorm(ii)
+  beta0 <- rnorm(1, ii)
+  beta1 <- rnorm(1, ii)
+  # beta0 <- 1
+  # beta1 <- 1
   dt <- sample(1:10, 1)
   n_obs <- sample(50:200, 1)
   ntheta <- 10 # number of parameter sets per test
   # simulate data
-  x0 <- rnorm(1, mu, sigma^2/2/gamma)
-  X <- ou_sim(gamma, mu, sigma, dt, n_obs, x0) 
+  x0 <- rnorm(1, t_mu, sqrt(t_sigma^2/2/t_gamma))
+  X <- ou_sim(t_gamma, t_mu, t_sigma, dt, n_obs, x0) 
   Y <- y_sim(X, beta0, beta1)
   
+  
   nll_diff <- replicate(ntheta, expr = {
-    # gamma <- rnorm(ii)
     gamma <- rexp(1, 1/ii)
-    # mu <- rnorm(ii)
     mu <- rexp(1, 1/ii)
-    # sigma <- rnorm(ii)
     sigma <- rexp(1, 1/ii)
-    beta0 <- rnorm(ii)
-    beta1 <- rnorm(ii)
+
     
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
-    # DATA_MATRIX(H); // rate covariate matrix
     
-    
-    f1=MakeADFun(data=list(model_type="model1",gamma=gamma,y=Y,b0=b0,b1=b1,mu=mu,sigma=sigma,dt=dt),parameters=list(X=X))
-    X_hat <- nlminb(f1$par,f1$fn,f1$gr)["X"]
-    
-    f2 <-  MakeADFun(data=list(model_type="model2",X=X, y=Y, dt=dt, b0=b0, b1=b1),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
-    H <- f2$he()
-
-    f3 <-  MakeADFun(data=list(model_type="model3", X=X, y=Y, H=H, dt=dt, b0=b0, b1=b1),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
-    nll_tmb <- f3$fn()
+    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,b0=beta0,b1=beta1, niter=10),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
+    nll_tmb <- f$fn()
     print(paste("nll_tmb is:", nll_tmb))
     print(paste("nll_r is:", nll_r))
     nll_r - nll_tmb
