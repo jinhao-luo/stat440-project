@@ -155,7 +155,7 @@ morse_sim <- function(gamma, alpha, mu, sigma, dt, n_obs, x0, n_sub) {
   Xt[seq(from = n_sub, to = n_tot, by = n_sub)]
 }
 
-sim_Y <- function(X, beta0, beta1) {
+y_sim <- function(X, beta0, beta1) {
   sapply(X, function(x) rpois(1, exp(beta0+beta1*x)))
 }
 
@@ -168,7 +168,7 @@ dt <- 1
 n_obs <- 100
 X0 <- 0
 X <- ou_sim(gamma, mu, sigma, dt, n_obs, X0)
-Y <- sim_Y(X,b0,b1)
+Y <- y_sim(X,b0,b1)
 nll <- ou_y_nll(gamma, mu, sigma, b0, b1, X, Y, dt)
 print(nll)
 

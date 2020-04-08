@@ -27,30 +27,40 @@ ntheta <- 10 # number of parameter sets per test case
 
 # cycle through test cases
 test_out <- sapply(test_cases, function(ii) {
-  t_gamma <- rnorm(ii)
-  t_mu <- rnorm(ii)
-  t_sigma <- rnorm(ii)
-  t_beta0 <- rnorm(ii)
-  t_beta1 <- rnorm(ii)
+  gamma <- rnorm(ii)
+  mu <- rnorm(ii)
+  sigma <- rnorm(ii)
+  beta0 <- rnorm(ii)
+  beta1 <- rnorm(ii)
   dt <- sample(1:10, 1)
   n_obs <- sample(50:200, 1)
   ntheta <- 10 # number of parameter sets per test
   # simulate data
-  x0 <- rnorm(mu, sigma^2/2/gamma)
-  X <- ou_sim(gamma, mu, sigma, dt, n_obs, x0) {
+  x0 <- rnorm(1, mu, sigma^2/2/gamma)
+  X <- ou_sim(gamma, mu, sigma, dt, n_obs, x0) 
   Y <- y_sim(X, beta0, beta1)
-
+  
   nll_diff <- replicate(ntheta, expr = {
     gamma <- rnorm(ii)
     mu <- rnorm(ii)
     sigma <- rnorm(ii)
     beta0 <- rnorm(ii)
     beta1 <- rnorm(ii)
-
+    
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
-    #f = MakeADFun(data=list(X=X, dt=dt, b0=b0, ),parameters=list(gamma=gamma, mu=mu, sigma=sigma),DDL="OUProcess")
-    nll_tmb <- f$fn()
-
+    # DATA_MATRIX(H); // rate covariate matrix
+    
+    
+    f1 <-  MakeADFun(data=list(X=X, y=Y, dt=dt, b0=beta0, b1=beta1),parameters=list(gamma=gamma, mu=mu, sigma=sigma),DDL="loglikelihood_x")
+    # X_hat <- nlminb(f$par,f$fn,f$gr,lower=c(-10,0.0),upper=c(10.0,10.0))["X"]   
+    
+    # f2 <-  MakeADFun(data=list(X=X_hat, y=Y, dt=dt, b0=b0, b1=b1),parameters=list(gamma=gamma, mu=mu, sigma=sigma),DDL="loglikelihood_inference")
+    # H <- f2$he()
+    
+    # f3 <-  MakeADFun(data=list(X=X_hat, y=Y, H=H, dt=dt, b0=b0, b1=b1),parameters=list(gamma=gamma, mu=mu, sigma=sigma),DDL="OUProcess")
+    # nll_tmb <- f3$fn()
+    nll_tmb <- 0
+    
     nll_r - nll_tmb
   })
   # `nll_diff` should contain a vector of `ntheta` identical values
