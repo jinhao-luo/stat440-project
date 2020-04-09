@@ -28,7 +28,7 @@ struct nll_brownian {
         T sigma_bm = (T) (sigma*sqrt(dt));
 
         for(int i=1;i<N;i++) {
-            nll -= dnorm(X[i], (T) X[i-1], sigma_bm, true);
+            nll -= dnorm(X[i], X[i-1], sigma_bm, true);
         }
         return nll;
     }

@@ -82,7 +82,7 @@ ou_y_nll <- function(gamma, mu, sigma, b0, b1, Xt, Yt, dt) {
 bm_sim <- function(mu, sigma, dt, n_obs, x0 = 0) {
   # Brownian increments
   dX <- rnorm(n_obs, mean = mu * dt, sd = sigma * sqrt(dt))
-  cumsum(x0 + dX)
+  x0 + cumsum(dX)
 }
 
 #' Negative loglikelihood for the Brownian model Xn.
