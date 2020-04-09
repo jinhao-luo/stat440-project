@@ -56,7 +56,7 @@ test_out <- sapply(test_cases, function(ii) {
     
     nll_x <- ou_nll(gamma, mu, sigma, X, dt)
     
-    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,b0=beta0,b1=beta1, niter=100),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
+    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,beta0=beta0,beta1=beta1, niter=100),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
     nll_tmb <- f$fn()
     # print(paste("nll_tmb is:", nll_tmb))
     # print(paste("nll_r is:", nll_r))
