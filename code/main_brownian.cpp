@@ -7,13 +7,12 @@ DATA_VECTOR(Y); // number of photons recorded
 DATA_INTEGER(niter); // number of iterations for laplace
 
 // Parameter inputs
-PARAMETER(mu); // parameter estimated
 PARAMETER(sigma); // parameter estimated
 int n = Y.size();
 
 
 // Construct joint negative log-likelihood
-nll_brownian<Type> f_nll(Y, dt, beta0, beta1, mu, sigma);
+nll_brownian<Type> f_nll(Y, dt, beta0, beta1, sigma);
 
 // Random effect initial guess
 vector<Type> u(n);
