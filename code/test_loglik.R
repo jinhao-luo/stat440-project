@@ -66,7 +66,6 @@ test_out <- sapply(test_cases, function(ii) {
   # `nll_diff` should contain a vector of `ntheta` identical values
   # the following checks that they are all equal,
   # i.e., that the largest difference between any two is very small
-  print(paste("nll_diff is:", nll_diff))
   max(abs(diff(nll_diff)))
 })
 
