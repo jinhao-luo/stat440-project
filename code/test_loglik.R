@@ -26,12 +26,10 @@ ntests <- nrow(test_cases) # number of test cases
 ntheta <- 10 # number of parameter sets per test case
 
 # cycle through test cases
-test_out <- sapply(test_cases, function(ii) {
+ou_test_out <- sapply(test_cases, function(ii) {
   t_gamma <- rexp(1, 1/ii)
   t_mu <- rexp(1, 1/ii)
   t_sigma <- rexp(1, 1/ii)
-  # beta0 <- rnorm(1, ii)
-  # beta1 <- rnorm(1, ii)
   beta0 <- 20
   beta1 <- 1
   dt <- sample(1:10, 1)
@@ -47,20 +45,11 @@ test_out <- sapply(test_cases, function(ii) {
     gamma <- rexp(1, 1/ii)
     mu <- rexp(1, 1/ii)
     sigma <- rexp(1, 1/ii)
-    # gamma <- t_gamma
-    # mu <- t_mu
-    # sigma <- t_sigma
-
     
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
     
-    nll_x <- ou_nll(gamma, mu, sigma, X, dt)
-    
     f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,beta0=beta0,beta1=beta1, niter=100),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
     nll_tmb <- f$fn()
-    # print(paste("nll_tmb is:", nll_tmb))
-    # print(paste("nll_r is:", nll_r))
-    # print(paste("nll_x is:", nll_x))
     nll_r - nll_tmb
   })
   # `nll_diff` should contain a vector of `ntheta` identical values
@@ -70,4 +59,41 @@ test_out <- sapply(test_cases, function(ii) {
 })
 
 # display the maximum absolute difference next to each test case
-cbind(test_cases, max_diff = signif(test_out,2))
+print("OU results")
+cbind(test_cases, max_diff = signif(ou_test_out,2))
+
+# cycle through test cases
+bm_test_out <- sapply(test_cases, function(ii) {
+  t_gamma <- rexp(1, 1/ii)
+  t_mu <- rexp(1, 1/ii)
+  t_sigma <- rexp(1, 1/ii)
+  beta0 <- 20
+  beta1 <- 1
+  dt <- sample(1:10, 1)
+  n_obs <- sample(50:200, 1)
+  ntheta <- 10 # number of parameter sets per test
+  # simulate data
+  x0 <- rnorm(1, t_mu, sqrt(t_sigma^2/2/t_gamma))
+  X <- bm_sim(t_mu, t_sigma, dt, n_obs, x0=x0) 
+  Y <- y_sim(X, beta0, beta1)
+  
+  
+  nll_diff <- replicate(ntheta, expr = {
+    gamma <- rexp(1, 1/ii)
+    mu <- rexp(1, 1/ii)
+    sigma <- rexp(1, 1/ii)
+    
+    nll_r <-  bm_y_nll(mu, sigma, beta0, beta1, X, Y, dt)
+    
+    f <- MakeADFun(data=list(model_type="brownian",dt=dt, Y=Y,beta0=beta0,beta1=beta1, niter=100),parameters=list(mu=mu, sigma=sigma))
+    nll_tmb <- f$fn()
+    nll_r - nll_tmb
+  })
+  # `nll_diff` should contain a vector of `ntheta` identical values
+  # the following checks that they are all equal,
+  # i.e., that the largest difference between any two is very small
+  max(abs(diff(nll_diff)))
+})
+
+print("Brownian results")
+cbind(test_cases, max_diff = signif(bm_test_out,2))

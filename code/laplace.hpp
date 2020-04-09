@@ -12,22 +12,11 @@ struct laplace_t {
     f(f_), u(u_), niter(niter_) {}
   Type operator()(){
     // Solve inner problem - Newton iterations
-    int lower = -10;
-    int upper = 10;
+
     for (int i=0; i<niter; i++){
       vector<Type> g = autodiff::gradient(f, u);
-      // std::cout << g << std::endl;
-      // for (int i = 0; i< g.size(); i++) {
-      //   if (g[i] < lower) {
-      //     g[i] = lower;
-      //   } else if (g[i] > upper) {
-      //     g[i] = upper;
-      //   }
-      // }
-      // std::cout << g << std::endl;
       
       matrix<Type> H = autodiff::hessian(f, u);
-      // std::count << H << std::endl;
       u = u - atomic::matinv(H) * g;
     }
     // Laplace approximation

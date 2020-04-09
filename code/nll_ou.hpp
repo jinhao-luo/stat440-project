@@ -7,9 +7,9 @@ template<class Type>
 struct nll_ou {
   
   // data inputs
-  Type dt; // interobservation time
-  Type b0; // beta 0
-  Type b1; // beta 1
+  Type dt; //  Time gap
+  Type beta0; // beta 0
+  Type beta1; // beta 1
   vector<Type> y; // number of photons recorded
   
   // Parameter inputs
@@ -19,13 +19,13 @@ struct nll_ou {
   
   /* Constructor */
   nll_ou(Type dt_,
-         Type b0_,
-         Type b1_,
+         Type beta0_,
+         Type beta1_,
          vector<Type> y_,
          Type gamma_,
          Type mu_,
          Type sigma_):
-  dt(dt_), b0(b0_), b1(b1_),
+  dt(dt_), beta0(beta0_), beta1(beta1_),
   y(y_), gamma(gamma_), mu(mu_), sigma(sigma_) {}
 
   template <typename T>
@@ -37,9 +37,9 @@ struct nll_ou {
    T tao = (T) (sigma/sqrt(2*gamma));
    
    int N = X.size();
-   // computes b0 - X * b1
-   vector<T> x_beta = (T) b0 - (T) b1 * X;
-   // computes (gamma_n*( b0 - X * b1 )-exp(b0 - X * b1 ))
+   // computes beta0 - X * beta1
+   vector<T> x_beta = (T) beta0 - (T) beta1 * X;
+   // computes (gamma_n*( beta0 - X * beta1 )-exp(beta0 - X * beta1 ))
    T nll = (T) (exp(x_beta) - y.template cast<T>() * x_beta).sum();
    
    // Calculate sigma for OU process

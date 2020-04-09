@@ -1,5 +1,4 @@
 // data inputs
-DATA_SCALAR(x0); 
 DATA_SCALAR(dt); //  Time gap
 DATA_SCALAR(beta0); // beta 0
 DATA_SCALAR(beta1); // beta 1
