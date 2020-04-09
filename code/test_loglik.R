@@ -30,10 +30,10 @@ test_out <- sapply(test_cases, function(ii) {
   t_gamma <- rexp(1, 1/ii)
   t_mu <- rexp(1, 1/ii)
   t_sigma <- rexp(1, 1/ii)
-  beta0 <- rnorm(1, ii)
-  beta1 <- rnorm(1, ii)
-  # beta0 <- 1
-  # beta1 <- 1
+  # beta0 <- rnorm(1, ii)
+  # beta1 <- rnorm(1, ii)
+  beta0 <- 20
+  beta1 <- 1
   dt <- sample(1:10, 1)
   n_obs <- sample(50:200, 1)
   ntheta <- 10 # number of parameter sets per test
@@ -47,19 +47,26 @@ test_out <- sapply(test_cases, function(ii) {
     gamma <- rexp(1, 1/ii)
     mu <- rexp(1, 1/ii)
     sigma <- rexp(1, 1/ii)
+    # gamma <- t_gamma
+    # mu <- t_mu
+    # sigma <- t_sigma
 
     
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
     
-    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,b0=beta0,b1=beta1, niter=25),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
+    nll_x <- ou_nll(gamma, mu, sigma, X, dt)
+    
+    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,b0=beta0,b1=beta1, niter=100),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
     nll_tmb <- f$fn()
-    print(paste("nll_tmb is:", nll_tmb))
-    print(paste("nll_r is:", nll_r))
+    # print(paste("nll_tmb is:", nll_tmb))
+    # print(paste("nll_r is:", nll_r))
+    # print(paste("nll_x is:", nll_x))
     nll_r - nll_tmb
   })
   # `nll_diff` should contain a vector of `ntheta` identical values
   # the following checks that they are all equal,
   # i.e., that the largest difference between any two is very small
+  print(paste("nll_diff is:", nll_diff))
   max(abs(diff(nll_diff)))
 })
 
