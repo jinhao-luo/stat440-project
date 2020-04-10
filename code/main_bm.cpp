@@ -12,7 +12,7 @@ int n = Y.size();
 
 
 // Construct joint negative log-likelihood
-nll_brownian<Type> f_nll(Y, dt, beta0, beta1, sigma);
+nll_bm<Type> f_nll(Y, dt, beta0, beta1, sigma);
 
 // Random effect initial guess
 vector<Type> u(n);

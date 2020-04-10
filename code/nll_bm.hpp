@@ -1,9 +1,9 @@
 // # include <TMB.hpp>
-/* The negative loglikelihood when x follows brownian motion
+/* The negative loglikelihood when x follows bm motion
     Note: this implementation is inspired by https://github.com/kaskr/adcomp/blob/master/tmb_examples/laplace.cpp
   */
 template<class Type>
-struct nll_brownian {
+struct nll_bm {
     // Data and parameter objects
     vector<Type> Y;
     Type dt;
@@ -12,7 +12,7 @@ struct nll_brownian {
     Type sigma;
 
     /* Constructor */
-    nll_brownian(vector<Type> Y_,
+    nll_bm(vector<Type> Y_,
 	    Type dt_,
 	    Type beta0_,
 	    Type beta1_,
