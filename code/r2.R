@@ -33,7 +33,7 @@ for (ii in 1:test_num) {
     mu <- rexp(1, 1/ii)
     sigma <- rexp(1, 1/ii)
     bm_f <- MakeADFun(data=list(model_type="bm",dt=dt, Y=Y, beta0=beta0, beta1=beta1, niter=200),parameters=list(sigma=sigma))
-    ou_f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,beta0=beta0,beta1=beta1, niter=200),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
+    ou_f <- MakeADFun(data=list(model_type="ou",dt=dt, y=Y,beta0=beta0,beta1=beta1, niter=200),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
 
     # calculate AIC, pick model
     bm_aic <- 2*bm_param_num+2*bm_f$fn()
