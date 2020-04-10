@@ -48,7 +48,7 @@ ou_test_out <- sapply(test_cases, function(ii) {
 
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
 
-    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,beta0=beta0,beta1=beta1, niter=100),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
+    f <- MakeADFun(data=list(model_type="ou",x0=x0, dt=dt, y=Y,beta0=beta0,beta1=beta1, niter=200),parameters=list(gamma=gamma, mu=mu, sigma=sigma))
     nll_tmb <- f$fn()
     nll_r - nll_tmb
   })
@@ -81,7 +81,7 @@ bm_test_out <- sapply(test_cases, function(ii) {
 
     nll_r <-  bm_y_nll(0, sigma, beta0, beta1, X, Y, dt)
 
-    f <- MakeADFun(data=list(model_type="brownian",dt=dt, Y=Y,beta0=beta0,beta1=beta1, niter=100),parameters=list(sigma=sigma))
+    f <- MakeADFun(data=list(model_type="bm",dt=dt, Y=Y,beta0=beta0,beta1=beta1, niter=200),parameters=list(sigma=sigma))
     nll_tmb <- f$fn()
     nll_r - nll_tmb
   })
