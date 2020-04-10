@@ -9,6 +9,7 @@ gr_mod <- "main"
 dyn.load(dynlib(gr_mod))
 
 # distinguish bm from OU
+
 correct_num <- 0
 bm_param_num <- 1
 ou_param_num <- 3
