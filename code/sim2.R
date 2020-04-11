@@ -23,22 +23,25 @@ ou_param_num <- 3
 #' @param n_obs Number of observations to generate.
 #' @param n_dataset Number of dataset to simulate for each `\beta`
 #' @return a vector of picked model
-sim_2 <- function(from, beta0, beta1, gamma = 1, mu = 10, sigma = sqrt(2), dt = 1,
+sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 1,
                   n_obs = 99, n_dataset = 100) {
     theta <- list(mu=mu, sigma=sigma, gamma=gamma, t = 1 / gamma, tau = sigma / sqrt(2 * gamma))
     models <- replicate(n_dataset, expr = {
+        # print("in replicate")
         Y <- c(NA)
         while (anyNA(Y)) {
+            # print("in loop")
             X <- 0
             if (from == "ou") {
                 X <- ou_sim(gamma, mu, sigma, dt, n_obs)
             } else if (from == "bm") {
-                X <- bm_sim(gamma, mu, sigma, dt, n_obs)
+                X <- bm_sim(mu, sigma, dt, n_obs, x0 = mu)
             } else {
                 stop("invalid from")
             }
             Y <- y_sim(X, beta0, beta1)
         }
+        # print(Y)
         ou_f <- MakeADFun(
             data = list(model_type = "ou", niter = 100, dt = dt, y = Y, beta0 = beta0, beta1 = beta1),
             parameters = list(gamma = gamma, mu = mu, sigma = sigma)
@@ -51,6 +54,8 @@ sim_2 <- function(from, beta0, beta1, gamma = 1, mu = 10, sigma = sqrt(2), dt = 
         bm_aic <- 2*bm_param_num+2*bm_f$fn()
         ou_aic <- 2*ou_param_num+2*ou_f$fn()
 
+        # print(bm_aic)
+        # print(ou_aic)
         if (bm_aic < ou_aic) {
             "bm"
         } else {
@@ -60,15 +65,16 @@ sim_2 <- function(from, beta0, beta1, gamma = 1, mu = 10, sigma = sqrt(2), dt = 
     models
 }
 
-test_cases <- data.frame(beta0=c(10,20,30), beta1=c(1,2,3))
-ou_result <- apply(test_cases, 1, function(beta) {
-    sim_2(from="ou", beta[["beta0"]], beta[["beta1"]], n_dataset = 2)
+# test_cases <- data.frame(beta0=c(10,20,30), beta1=c(1,2,3))
+test_cases <- data.frame(sigma=c(0.00000001, sqrt(2)))
+ou_result <- apply(test_cases, 1, function(info) {
+    sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 20)
 })
 print("Simulate from OU")
 cbind(test_cases, t(ou_result))
 
-bm_result <- apply(test_cases, 1, function(beta) {
-    sim_2(from="bm", beta[["beta0"]], beta[["beta1"]], n_dataset = 2)
+bm_result <- apply(test_cases, 1, function(info) {
+    sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 20)
 })
 print("Simulate from bm")
 cbind(test_cases, t(bm_result))
