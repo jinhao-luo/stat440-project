@@ -39,6 +39,7 @@ ou_test_out <- sapply(test_cases, function(ii) {
   x0 <- rnorm(1, t_mu, sqrt(t_sigma^2/2/t_gamma))
   Y <- c(NA)
     while (anyNA(Y)) {
+      print("in NA")
       X <- ou_sim(t_gamma, t_mu, t_sigma, dt, n_obs, x0)
       Y <- y_sim(X, beta0, beta1)
     }
@@ -67,7 +68,7 @@ cbind(test_cases, max_diff = signif(ou_test_out,2))
 # cycle through test cases
 bm_test_out <- sapply(test_cases, function(ii) {
   t_sigma <- rexp(1, 1/ii)
-  beta0 <- 10
+  beta0 <- 20
   beta1 <- 1
   dt <- sample(1:10, 1)
   n_obs <- sample(50:200, 1)
@@ -75,10 +76,11 @@ bm_test_out <- sapply(test_cases, function(ii) {
   # simulate data
   x0 <- rnorm(1, 1+ii)
   Y <- c(NA)
-    while (anyNA(Y)) {
-      X <- ou_sim(t_gamma, t_mu, t_sigma, dt, n_obs, x0)
-      Y <- y_sim(X, beta0, beta1)
-    }
+  while (anyNA(Y)) {
+    print("in NA")
+    X <- bm_sim(0, t_sigma, dt, n_obs, x0=x0)
+    Y <- y_sim(X, beta0, beta1)
+  }
 
 
   nll_diff <- replicate(ntheta, expr = {
