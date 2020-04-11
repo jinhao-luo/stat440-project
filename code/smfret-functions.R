@@ -16,7 +16,7 @@
 #' X_s+t | X_s ~ N( rho_t * (X_s - mu) + mu, tau^2 * (1-rho_t^2) ),
 #' ```
 #' where `rho_t = exp(-gamma * t)` and `tau^2 = sigma^2/(2*gamma)`.  Its stationary distribution is `X_t ~ N(mu, tau^2)`.
-ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0) {
+ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0=mu) {
   tau <- sigma/sqrt(2*gamma) # stationary standard deviation
   if(missing(x0)) x0 <- rnorm(1, mean = mu, sd = tau)
   # generate efficiently using a one-step linear filter
