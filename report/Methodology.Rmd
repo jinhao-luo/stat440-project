@@ -1,0 +1,9 @@
+---
+title: "Methodology"
+output: pdf_document
+---
+
+## Methodology
+
+### Laplace implementation
+In (todo:equation), we aim to have the $\hat{\theta}$ that maximize $l_{Lap}(\theta|Y)$. In addition, in (todo:equation), we need the value of $X_{\theta}$ for $\hat{\theta}$, this $X_{\theta}$ and $\theta$ have to be optimized simultanously; we use Newton-Raphson method to in Laplace approximation to achieve this.

@@ -70,16 +70,16 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
     models
 }
 
-test_cases <- data.frame(sigma=c(0.00000001, 0.001, sqrt(2)))
+test_cases <- data.frame(sigma=c(0.00000001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
 ou_result <- apply(test_cases, 1, function(info) {
     sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4)
 })
 print("Simulate from OU")
 cbind(test_cases, t(ou_result))
 
-test_cases <- data.frame(sigma=c(0.00000001, 0.001, sqrt(2)))
+test_cases <- data.frame(sigma=c(0.00000001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
 bm_result <- apply(test_cases, 1, function(info) {
-    sim_2(from="bm", sigma=info[["sigma"]], gamma = 0.0000000001, n_dataset = 4, n_obs = 200)
+    sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200)
 })
 print("Simulate from BM")
 cbind(test_cases, t(bm_result))
