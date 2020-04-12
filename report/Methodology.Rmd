@@ -7,3 +7,5 @@ output: pdf_document
 
 ### Laplace implementation
 In (todo:equation), we aim to have the $\hat{\theta}$ that maximize $l_{Lap}(\theta|Y)$. In addition, in (todo:equation), we need the value of $X_{\theta}$ for $\hat{\theta}$, this $X_{\theta}$ and $\theta$ have to be optimized simultanously; we use Newton-Raphson method to in Laplace approximation to achieve this.
+
+Also, we compare the results of our self-implementated Laplace approximation with TMB built-in Laplace approximation. ...
