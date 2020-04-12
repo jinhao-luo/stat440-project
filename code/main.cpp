@@ -14,5 +14,5 @@ Type objective_function<Type>::operator() ()
   } else {
     error ("Unknown model type");
   }
-  return 0;
+  return 0; // TODO: move into else
 }
