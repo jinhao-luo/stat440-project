@@ -74,12 +74,12 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
 }
 
 # 1)
-test_cases <- data.frame(sigma=c(0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
-ou_result <- apply(test_cases, 1, function(info) {
-    sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4, beta0=10, beta1=1)
-})
-print("Simulate from OU first time")
-cbind(test_cases, t(ou_result))
+# test_cases <- data.frame(sigma=c(0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
+# ou_result <- apply(test_cases, 1, function(info) {
+#     sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4, beta0=10, beta1=1)
+# })
+# print("Simulate from OU first time")
+# cbind(test_cases, t(ou_result))
 
 test_cases <- data.frame(sigma=c(0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
 ou_result <- apply(test_cases, 1, function(info) {
@@ -88,11 +88,18 @@ ou_result <- apply(test_cases, 1, function(info) {
 print("Simulate from OU second time")
 cbind(test_cases, t(ou_result))
 
+# test_cases <- data.frame(sigma=c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
+# bm_result <- apply(test_cases, 1, function(info) {
+#     sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200, beta0=10, beta1=1)
+# })
+# print("Simulate from BM first time")
+# cbind(test_cases, t(bm_result))
+
 test_cases <- data.frame(sigma=c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
 bm_result <- apply(test_cases, 1, function(info) {
     sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200, beta0=10, beta1=1, mu=1, gamma=2)
 })
-print("Simulate from BM")
+print("Simulate from BM second time")
 cbind(test_cases, t(bm_result))
 
 
