@@ -57,12 +57,9 @@ sim_1 <- function(beta0, beta1, gamma = 1, mu = 10, sigma = sqrt(2*gamma), dt = 
 }
 
 sim_1(10,1,n_dataset = 10)
-debug(sim_1)
 
-test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10))
+test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10), sigma=c(1,0.1,0.01))
 result <- apply(test_cases, 1, function(tc) {
-    sim_1(tc[["beta0"]], tc[["beta1"]], mu=tc[["mu"]], gamma=tc[["gamma"]],n_dataset = 10, n_obs=99)
+    sim_1(tc[["beta0"]], tc[["beta1"]], mu=tc[["mu"]], gamma=tc[["gamma"]],sigma=tc[["sigma"]], n_dataset = 10, n_obs=99)
 })
 t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
-
-test_gamma <- expand.grid(beta0=seq(5:15))
