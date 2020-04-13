@@ -26,6 +26,7 @@ ou_param_num <- 3
 sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 1,
                   n_obs = 99, n_dataset = 100) {
     theta <- list(mu=mu, sigma=sigma, gamma=gamma, t = 1 / gamma, tau = sigma / sqrt(2 * gamma))
+    print("reach0")
     models <- replicate(n_dataset, expr = {
         print("in replicate")
         Y <- c(NA)
@@ -41,11 +42,13 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
             }
             Y <- y_sim(X, beta0, beta1)
         }
-        # print(Y)
+        print("reach1")
         ou_f <- MakeADFun(
             data = list(model_type = "ou", niter = 100, dt = dt, y = Y, beta0 = beta0, beta1 = beta1),
             parameters = list(gamma = gamma, mu = mu, sigma = sigma)
         )
+        print("reach2")
+        print(ou_f$par)
         ou_result <- optim(par = ou_f$par, fn = ou_f$fn, gr = ou_f$gr,
             control = list(maxit = 1000)
         )
@@ -70,16 +73,24 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
     models
 }
 
-test_cases <- data.frame(sigma=c(0.00000001, 0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
+# 1)
+test_cases <- data.frame(sigma=c(0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
 ou_result <- apply(test_cases, 1, function(info) {
-    sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4)
+    sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4, beta0=10, beta1=1)
 })
-print("Simulate from OU")
+print("Simulate from OU first time")
 cbind(test_cases, t(ou_result))
 
-test_cases <- data.frame(sigma=c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
+test_cases <- data.frame(sigma=c(0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
+ou_result <- apply(test_cases, 1, function(info) {
+    sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4, beta0=10, beta1=1, mu=1, gamma=2)
+})
+print("Simulate from OU second time")
+cbind(test_cases, t(ou_result))
+
+test_cases <- data.frame(sigma=c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
 bm_result <- apply(test_cases, 1, function(info) {
-    sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200)
+    sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200, beta0=10, beta1=1, mu=1, gamma=2)
 })
 print("Simulate from BM")
 cbind(test_cases, t(bm_result))
