@@ -50,14 +50,16 @@ ou_test_out <- sapply(test_cases, function(ii) {
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
 
     f <- MakeADFun(data = list(model_type = "ou", dt = dt, y = Y, beta0 = beta0, beta1 = beta1), parameters = list(X =X, gamma = gamma, mu = mu, sigma = sigma))
+    # f <- MakeADFun(data = list(model_type = "ou", dt = dt, y = Y, beta0 = beta0, beta1 = beta1), parameters = list(X =X, gamma = gamma, mu = mu, sigma = sigma), random=c("X"), inner.control = list(smartsearch=FALSE, maxit=100))
 
     nll_tmb <- f$fn()
+    print(paste("nll_r=", nll_r, ", nll_tmb=", nll_tmb))
     nll_r - nll_tmb
   })
   # `nll_diff` should contain a vector of `ntheta` identical values
   # the following checks that they are all equal,
   # i.e., that the largest difference between any two is very small
-  max(abs(diff(nll_diff)))
+  diff(range(nll_diff))
 })
 
 # display the maximum absolute difference next to each test case
