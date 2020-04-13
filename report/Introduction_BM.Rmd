@@ -12,7 +12,7 @@ Brownian motion is widely used to model the donor-acceptor distance during free 
 
 $$ X_{t+\Delta t}|X_{t} = N(X_{t}, \sigma^2 \Delta t)$$  
 
-Every subsequent variation in distance by an increment of $\Delta t$ has a mean-reverting nature. That is, the donor-acceptor distance in the next instance revolves around the mean (current-time donor-aceptor distance) of the process in any direction. With the process involving Markov element, the sequence of possible molecular motions is only current-state dependent, and it is often refered to as memoryless. The collection of the independent processes at each instance $\Delta t$, are recognised as jointly Gaussian (normal).  
+Every subsequent variation in distance by an increment of $\Delta t$ has a mean-reverting nature. That is, the donor-acceptor distance in the next instance revolves around the mean of the process in any direction. In the Brownian Motion model, the mean is set as the current-time donor-aceptor distance. With the process involving Markov element, the sequence of possible molecular motions is only current-state dependent, and it is often refered to as memoryless. The collection of the independent processes at each instance $\Delta t$, are recognised as jointly Gaussian (normal).  
 
 The variation is determined by the diffussion rate $\sigma$, multiplied by $\Delta t$. The diffussion rate is set constant in our study, which implies the thermal temperature and pressure are kept unchanged and no external force is applied into the system.  
 
