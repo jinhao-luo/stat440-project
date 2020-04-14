@@ -50,7 +50,7 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
     theta_hat <- apply(test_output, 2, function(tc) {tc$theta_hat})
     print(theta_hat)
     # get number of NAs in simulation
-    num_na <- sum(is.na(theta_hat["t",]))
+    num_na <- sum(is.na(theta_hat))/length(theta)
     # calulate rmse
     rmse <- sapply(rownames(theta_hat), function (j) {
         sqrt(mean((theta_hat[j,]-theta[[j]])^2, na.rm=TRUE))/theta[[j]]
@@ -72,7 +72,7 @@ debug(sim_1)
 # })
 # t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
 
-test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=1, mu=c(1, 10), sigma=sqrt(2), dt=1)
+test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=1, mu=10, sigma=sqrt(2), dt=1)
 test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10), sigma=c(sqrt(2),sqrt(0.2),sqrt(20)), dt=1)
 result <- apply(test_cases, 1, function(tc) {
     omega <- exp(-tc[["gamma"]]*tc[["dt"]])
