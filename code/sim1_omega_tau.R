@@ -1,8 +1,10 @@
 require("TMB")
+library(NMOF)
 source("smfret-functions.R")
 gr_mod <- "builtin"
 # gr_mod <- "main"
 dyn.load(dynlib(gr_mod))
+
 
 
 #' simulation 1
@@ -34,7 +36,28 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
             test_detail$theta_hat <- param
         } else {
             # param <- list(omega= runif(1), mu = -10, tau= 1, X=rep(0, n_obs))
-            param <- list(omega= 0, mu = 0, tau= 1, X=rep(0, n_obs)) 
+            rs_num <- 100
+            omegas <- seq(0+0.01, 1-0.01, 0.01)
+
+            test_function <- function(test_omega) {
+                param <- list(omega= test_omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
+                data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
+                f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method="BFGS")
+                result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method="BFGS")
+                theta_hat <- result$par
+                theta_hat["gamma"] <- -log(theta_hat["omega"])/dt
+                theta_hat["t"] <- 1/theta_hat["gamma"]
+                theta_hat["sigma"] <- theta_hat["tau"]*sqrt(2*theta_hat["gamma"])
+                test_detail$theta_hat <- theta_hat
+                return(f$fn(result$par))
+            }
+
+
+            sol <- gridSearch(fun=test_function, levels = list(omegas))
+            print(sol$minfun)
+            print(sol$minlevel)
+            omega <- sol$minlevel
+            param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
             f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method="BFGS")
             result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method="BFGS")
@@ -50,7 +73,7 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
     theta_hat <- apply(test_output, 2, function(tc) {tc$theta_hat})
     print(theta_hat)
     # get number of NAs in simulation
-    num_na <- sum(is.na(theta_hat))/length(theta)
+    num_na <- NA
     # calulate rmse
     rmse <- sapply(rownames(theta_hat), function (j) {
         sqrt(mean((theta_hat[j,]-theta[[j]])^2, na.rm=TRUE))/theta[[j]]
@@ -72,11 +95,11 @@ debug(sim_1)
 # })
 # t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
 
-test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=1, mu=10, sigma=sqrt(2), dt=1)
-test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10), sigma=c(sqrt(2),sqrt(0.2),sqrt(20)), dt=1)
-result <- apply(test_cases, 1, function(tc) {
-    omega <- exp(-tc[["gamma"]]*tc[["dt"]])
-    tau <- tc[["sigma"]] / sqrt(2*tc[["gamma"]])
-    sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], mu=tc[["mu"]], omega=omega, tau=tau, n_dataset = 100, n_obs=199)
-})
-t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
+# test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=1, mu=c(1, 10), sigma=sqrt(2), dt=1)
+# test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10), sigma=c(sqrt(2),sqrt(0.2),sqrt(20)), dt=1)
+# result <- apply(test_cases, 1, function(tc) {
+#     omega <- exp(-tc[["gamma"]]*tc[["dt"]])
+#     tau <- tc[["sigma"]] / sqrt(2*tc[["gamma"]])
+#     sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], mu=tc[["mu"]], omega=omega, tau=tau, n_dataset = 100, n_obs=199)
+# })
+# t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
