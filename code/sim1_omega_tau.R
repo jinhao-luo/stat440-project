@@ -37,7 +37,7 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
             param <- list(omega= 0, mu = 0, tau= 1, X=rep(0, n_obs)) 
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
             f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method="BFGS")
-            result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method="BFGS")
+            result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(trace=5, maxit=1000, abstol=1e-8), method="BFGS")
             theta_hat <- result$par
             theta_hat["gamma"] <- -log(theta_hat["omega"])/dt
             theta_hat["t"] <- 1/theta_hat["gamma"]
@@ -72,11 +72,11 @@ debug(sim_1)
 # })
 # t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
 
-test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=1, mu=10, sigma=sqrt(2), dt=1)
 test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10), sigma=c(sqrt(2),sqrt(0.2),sqrt(20)), dt=1)
+test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=1, mu=10, sigma=sqrt(2), dt=1)
 result <- apply(test_cases, 1, function(tc) {
     omega <- exp(-tc[["gamma"]]*tc[["dt"]])
     tau <- tc[["sigma"]] / sqrt(2*tc[["gamma"]])
-    sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], mu=tc[["mu"]], omega=omega, tau=tau, n_dataset = 100, n_obs=199)
+    sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], mu=tc[["mu"]], omega=omega, tau=tau, n_dataset = 1000, n_obs=999)
 })
 t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
