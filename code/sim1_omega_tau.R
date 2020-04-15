@@ -34,10 +34,10 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
             test_detail$theta_hat <- param
         } else {
             # param <- list(omega= runif(1), mu = -10, tau= 1, X=rep(0, n_obs))
-            param <- list(omega= 0, mu = 0, tau= 1, X=rep(0, n_obs)) 
+            param <- list(omega= 0.5, mu = 0, tau= 1, X=rep(0, n_obs)) 
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-            f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method="BFGS")
-            result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(trace=5, maxit=1000, abstol=1e-8), method="BFGS")
+            f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
+            result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
             theta_hat <- result$par
             theta_hat["gamma"] <- -log(theta_hat["omega"])/dt
             theta_hat["t"] <- 1/theta_hat["gamma"]
@@ -61,8 +61,16 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
 
 
 # debug(sim_1)
-sim_out <-sim_1(10,0.5,n_dataset = 5,n_obs=199)
-sim_out$rmse
+sim_out0 <-sim_1(10,0.5,n_dataset = 100,n_obs=99)
+sim_out1 <-sim_1(10,0.5,n_dataset = 100,n_obs=199)
+sim_out2 <-sim_1(10,0.5,n_dataset = 100,n_obs=299)
+sim_out3 <-sim_1(10,0.5,n_dataset = 100,n_obs=399)
+sim_out4 <-sim_1(10,0.5,n_dataset = 100,n_obs=499)
+sim_out0$rmse
+sim_out1$rmse
+sim_out2$rmse
+sim_out3$rmse
+sim_out4$rmse
 debug(sim_1)
 
 
