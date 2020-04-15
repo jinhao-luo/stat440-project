@@ -49,7 +49,7 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
 
             omega <- 0
             if (multi_start) {
-                omegas <- seq(0+0.01, 1-0.01, 0.01)
+                omegas <- seq(0+0.01, 1-0.01, 0.98)
                 omega <- find_optim_omega(omegas, n_obs, dt, Y, beta0, beta1)
             }
             param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
@@ -112,11 +112,11 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
 # print("Simulate from BM first time")
 # cbind(test_cases, t(bm_result))
 
-test_cases <- data.frame(sigma=c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
-bm_result <- apply(test_cases, 1, function(info) {
-    sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200, beta0=10, beta1=1, mu=1, gamma=2)
-})
-print("Simulate from BM second time")
-cbind(test_cases, t(bm_result))
+# test_cases <- data.frame(sigma=c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
+# bm_result <- apply(test_cases, 1, function(info) {
+#     sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200, beta0=10, beta1=1, mu=1, gamma=2)
+# })
+# print("Simulate from BM second time")
+# cbind(test_cases, t(bm_result))
 
 
