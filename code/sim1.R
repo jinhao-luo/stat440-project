@@ -16,8 +16,8 @@ dyn.load(dynlib(gr_mod))
 #' @param n_obs Number of observations to generate.
 #' @param n_dataset Number of dataset to simulate for each `\beta`
 #' @return a vector of rmse: rmse for inference on each simulated dataset
-sim_1 <- function(beta0, beta1, gamma = 1, mu = 10, sigma = sqrt(2*gamma), dt = 1,
-                  n_obs = 99, n_dataset = 100) {
+sim_1 <- function(beta0=10, beta1=0.5, gamma = 1, mu = 10, sigma = sqrt(2*gamma), dt = 1,
+                  n_obs = 99, n_dataset = 100, method="BFGS") {
     theta <- list(mu=mu, sigma=sigma, gamma=gamma, t = 1 / gamma, tau = sigma / sqrt(2 * gamma))
     test_output <- replicate(n_dataset, expr = {
         test_detail <- list()
@@ -30,13 +30,13 @@ sim_1 <- function(beta0, beta1, gamma = 1, mu = 10, sigma = sqrt(2*gamma), dt = 
             names(param) <- param_names
             test_detail$param <- param
         } else {
-            param <- list(gamma = 100, mu = -10, sigma = 100, X=rep(0, n_obs))
+            param <- list(gamma = 1, mu = 0, sigma = 1, X=rep(0, n_obs))
             data <- list(model_type = "ou", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-            f <- MakeADFun(data = data, parameters = param, random = c("X"), inner.control = list(smartsearch=FALSE, maxit = 50), silent = TRUE)
+            f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
             # param <- list(gamma = 1, mu = 0, sigma = 1)
             # data <- list(model_type = "ou", niter = 1000, dt = dt, beta0 = beta0, beta1 = beta1, y = Y)
             # f <- MakeADFun(data = data, parameters = param)
-            result <- optim(par = f$par, fn = f$fn, gr = f$gr)
+            result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000,reltol=1e-8))
             param <- result$par
             param["t"] <- 1/param["gamma"]
             param["tau"] <- param["sigma"] / sqrt(2*param["gamma"])
@@ -56,10 +56,10 @@ sim_1 <- function(beta0, beta1, gamma = 1, mu = 10, sigma = sqrt(2*gamma), dt = 
     sim_output
 }
 
-sim_1(10,1,n_dataset = 10)
+sim_1()
 
-test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10), sigma=c(1,0.1,0.01))
+test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10))
 result <- apply(test_cases, 1, function(tc) {
-    sim_1(tc[["beta0"]], tc[["beta1"]], mu=tc[["mu"]], gamma=tc[["gamma"]],sigma=tc[["sigma"]], n_dataset = 10, n_obs=99)
+    sim_1(tc[["beta0"]], tc[["beta1"]], mu=tc[["mu"]], gamma=tc[["gamma"]], n_dataset = 100, n_obs=99)
 })
 t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
