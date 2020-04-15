@@ -42,8 +42,8 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
             test_function <- function(test_omega) {
                 param <- list(omega= test_omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
                 data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-                f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method="BFGS")
-                result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method="BFGS")
+                f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
+                result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
                 theta_hat <- result$par
                 theta_hat["gamma"] <- -log(theta_hat["omega"])/dt
                 theta_hat["t"] <- 1/theta_hat["gamma"]
@@ -59,8 +59,8 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
             omega <- sol$minlevel
             param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-            f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method="BFGS")
-            result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method="BFGS")
+            f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
+            result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
             theta_hat <- result$par
             theta_hat["gamma"] <- -log(theta_hat["omega"])/dt
             theta_hat["t"] <- 1/theta_hat["gamma"]
@@ -84,7 +84,7 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
 
 
 # debug(sim_1)
-sim_out <-sim_1(10,0.5,n_dataset = 5,n_obs=199)
+sim_out <-sim_1(10,0.5, omega=exp(-0.1),n_dataset = 5,n_obs=399)
 sim_out$rmse
 debug(sim_1)
 
@@ -97,9 +97,51 @@ debug(sim_1)
 
 # test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=1, mu=c(1, 10), sigma=sqrt(2), dt=1)
 # test_cases <- expand.grid(beta0=10, beta1=0.5, gamma=c(0.1,1,10), mu=c(1, 10), sigma=c(sqrt(2),sqrt(0.2),sqrt(20)), dt=1)
-# result <- apply(test_cases, 1, function(tc) {
-#     omega <- exp(-tc[["gamma"]]*tc[["dt"]])
-#     tau <- tc[["sigma"]] / sqrt(2*tc[["gamma"]])
-#     sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], mu=tc[["mu"]], omega=omega, tau=tau, n_dataset = 100, n_obs=199)
-# })
-# t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
+result <- apply(test_cases, 1, function(tc) {
+    omega <- exp(-tc[["gamma"]]*tc[["dt"]])
+    tau <- tc[["sigma"]] / sqrt(2*tc[["gamma"]])
+    sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], mu=tc[["mu"]], omega=omega, tau=tau, n_dataset = 100, n_obs=199)
+})
+t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
+
+test_cases <- expand.grid(n_obs=c(99,199,299,399,499,599))
+result <- apply(test_cases, 1, function(tc) {
+    sim_1(n_dataset=100, n_obs=tc[["n_obs"]])
+})
+t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
+
+test_cases <- expand.grid(method=c("BFGS", "Nelder-Mead"))
+result <- apply(test_cases, 1, function(tc) {
+    sim_1(n_dataset=5, n_obs=99, method=tc[["method"]])
+})
+t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
+
+
+# testing diff
+# test_beta0 <- c(10, 20, 1)
+test_beta0 <- c(10)
+mu <- 10
+test_cases <- do.call("rbind", (lapply(test_beta0, function(beta0) {
+    data.frame(beta0=beta0, beta1=seq(max(0.1, (beta0-20)/mu), (beta0+1)/mu,length.out=10))
+})))
+system("osascript -e 'display notification \"beta sim started\" with title \"STAT440\" sound name \"default\"'")
+result <- apply(test_cases, 1, function(tc) {
+    print(tc)
+    sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], n_dataset=100, n_obs=99)
+})
+t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
+system("osascript -e 'display notification \"beta sim done\" with title \"STAT440\" sound name \"default\"'")
+
+
+test_beta0 <- c(10)
+mu <- 10
+test_cases <- do.call("rbind", (lapply(test_beta0, function(beta0) {
+    data.frame(beta0=beta0, beta1=seq(max(0.1, (beta0-20)/mu), (beta0+1)/mu,length.out=10))
+})))
+system("osascript -e 'display notification \"beta sim started\" with title \"STAT440\" sound name \"default\"'")
+result <- apply(test_cases, 1, function(tc) {
+    print(tc)
+    sim_1(beta0=tc[["beta0"]], beta1=tc[["beta1"]], n_dataset=100, n_obs=99)
+})
+t(sapply(1:nrow(test_cases), function(i) {c(theta=result[[i]]$true_param, rmse=result[[i]]$rmse)}))
+system("osascript -e 'display notification \"beta sim done\" with title \"STAT440\" sound name \"default\"'")
