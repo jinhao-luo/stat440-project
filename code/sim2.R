@@ -49,7 +49,7 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
 
             omega <- 0
             if (multi_start) {
-                omegas <- seq(0+0.01, 1-0.01, 0.98)
+                omegas <- seq(0+0.01, 1-0.01, 0.196)
                 omega <- find_optim_omega(omegas, n_obs, dt, Y, beta0, beta1)
             }
             param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
