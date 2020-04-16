@@ -49,9 +49,10 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
                         f$fn(result$par)
                     }, error= function(cond) {Inf}, 
                     warning=function(cond) {Inf})) # avoid optim function cannot be evaluated at inital param error TODO: fix this
+                    # TODO: maybe remove tryCatch
                 }
 
-                sol <- gridSearch(fun=test_function, levels = list(omegas)) # TODO: silent this (printDetail = FALSE)
+                sol <- gridSearch(fun=test_function, levels = list(omegas), printDetail=FALSE)
                 omega <- sol$minlevel[1] # minlevel could return multiple values if they have same value
             } else {
                 omega<- 0.5
