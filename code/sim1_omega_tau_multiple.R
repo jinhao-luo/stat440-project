@@ -31,45 +31,43 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
         test_detail$Y <- Y
         test_detail$theta_hat <- c(omega=NA, mu=NA, tau=NA, gamma=NA, t=NA, sigma=NA)
         if (!anyNA(Y)) {
-            omegas <- seq(0+0.01, 1-0.01, length.out=num_multistart) # TODO: might need to change this back?
+            if(num_multistart > 1) {
+                omegas <- seq(0+0.01, 1-0.01, length.out=num_multistart)
+                test_function <- function(test_omega) {
+                    param <- list(omega= test_omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
+                    data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
+                    f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
+                    return(tryCatch({
+                        # result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
+                        result <- constrOptim(f$par, f$fn, f$gr, control=list(maxit=1000, reltol=1e-8), method=method,
+                            ui = rbind(c(1,0,0), c(-1,0,0), c(0,0,1)), ci=c(0,-1, 0))
+                        theta_hat <- result$par
+                        theta_hat["gamma"] <- -log(theta_hat["omega"])/dt
+                        theta_hat["t"] <- 1/theta_hat["gamma"]
+                        theta_hat["sigma"] <- theta_hat["tau"]*sqrt(2*theta_hat["gamma"])
+                        test_detail$theta_hat <- theta_hat
+                        f$fn(result$par)
+                    }, error= function(cond) {Inf}, 
+                    warning=function(cond) {Inf})) # avoid optim function cannot be evaluated at inital param error TODO: fix this
+                }
 
-            test_function <- function(test_omega) {
-                param <- list(omega= test_omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
-                data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-                f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
-                return(tryCatch({
-                    result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
-                    theta_hat <- result$par
-                    theta_hat["gamma"] <- -log(theta_hat["omega"])/dt
-                    theta_hat["t"] <- 1/theta_hat["gamma"]
-                    theta_hat["sigma"] <- theta_hat["tau"]*sqrt(2*theta_hat["gamma"])
-                    test_detail$theta_hat <- theta_hat
-                    f$fn(result$par)
-                }, error= function(cond) {Inf}, 
-                warning=function(cond) {Inf})) # avoid optim function cannot be evaluated at inital param error TODO: fix this
+                sol <- gridSearch(fun=test_function, levels = list(omegas)) # TODO: silent this (printDetail = FALSE)
+                omega <- sol$minlevel[1] # minlevel could return multiple values if they have same value
+            } else {
+                omega<- 0.5
             }
-
-
-            sol <- gridSearch(fun=test_function, levels = list(omegas)) # TODO: silent this (printDetail = FALSE)
-            print(sol$minlevel)
-            omega <- sol$minlevel[1] # minlevel could return multiple values if they have same value
             param <- list(omega=omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
             f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
-            if (FALSE) {
-            # if (sol$value[1] == Inf) {
-                # given method failed to give valid omega \in (0,1)
-                test_detail$theta_hat["omega"] <- 0
-                warning("Some optimization failed")
-            } else {
-                result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
-                theta_hat <- result$par
-                theta_hat["gamma"] <- log(theta_hat["omega"])/-dt
-                theta_hat["t"] <- 1/theta_hat["gamma"]
-                theta_hat["sigma"] <- theta_hat["tau"]*sqrt(2*theta_hat["gamma"])
-                test_detail$theta_hat <- theta_hat
+            # result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
+            result <- constrOptim(f$par, f$fn, f$gr, control=list(maxit=1000, reltol=1e-8), method=method,
+                ui = rbind(c(1,0,0), c(-1,0,0), c(0,0,1)), ci=c(0,-1, 0))
+            theta_hat <- result$par
+            theta_hat["gamma"] <- log(theta_hat["omega"])/-dt
+            theta_hat["t"] <- 1/theta_hat["gamma"]
+            theta_hat["sigma"] <- theta_hat["tau"]*sqrt(2*theta_hat["gamma"])
+            test_detail$theta_hat <- theta_hat
             }
-        }
         test_detail
     })
 
