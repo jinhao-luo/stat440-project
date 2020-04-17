@@ -1,0 +1,48 @@
+[1] "Simulate from BM with beta0= 10 beta1= 0.5 mu= 0 gamma= 5 with method= Nelder-Mead"
+  sigma  1  2  3  4  5  6
+1 1e-06 bm ou bm ou ou bm
+2 1e-05 bm ou bm ou ou bm
+3 1e-04 bm ou bm ou ou bm
+4 1e-03 bm ou bm ou ou bm
+5 1e-02 bm ou bm ou ou bm
+6 1e-01 bm ou bm ou ou bm
+[1] "Simulate from BM with beta0= 5 beta1= 0.5 mu= 0 gamma= 5 with method= Nelder-Mead"
+  sigma  1  2  3  4  5  6
+1 1e-06 bm ou ou bm bm bm
+2 1e-05 bm ou ou bm bm bm
+3 1e-04 bm ou ou bm bm bm
+4 1e-03 bm ou ou bm bm bm
+5 1e-02 bm ou ou bm bm bm
+6 1e-01 bm ou ou bm bm bm
+[1] "Simulate from BM with beta0= 5 beta1= 1 mu= 0 gamma= 5 with method= Nelder-Mead"
+  sigma  1  2  3  4  5  6
+1 1e-06 bm bm bm ou bm ou
+2 1e-05 bm bm bm ou bm ou
+3 1e-04 bm bm bm ou bm ou
+4 1e-03 bm bm bm ou bm ou
+5 1e-02 bm bm bm ou bm ou
+6 1e-01 bm bm bm ou bm ou
+[1] "Simulate from BM with beta0= 10 beta1= 0.5 mu= 0 gamma= 5 with method= BFGS"
+  sigma  1  2  3  4  5  6
+1 1e-06 bm bm bm bm bm bm
+2 1e-05 bm bm bm bm bm bm
+3 1e-04 bm bm bm bm bm bm
+4 1e-03 bm bm bm bm bm bm
+5 1e-02 bm bm bm bm bm bm
+6 1e-01 bm bm bm bm bm bm
+[1] "Simulate from BM with beta0= 5 beta1= 0.5 mu= 0 gamma= 5 with method= BFGS"
+  sigma  1  2  3  4  5  6
+1 1e-06 bm bm ou ou bm bm
+2 1e-05 bm bm ou ou bm bm
+3 1e-04 bm bm ou ou bm bm
+4 1e-03 bm bm ou ou bm bm
+5 1e-02 bm bm ou ou bm bm
+6 1e-01 bm bm ou ou bm bm
+[1] "Simulate from BM with beta0= 5 beta1= 1 mu= 0 gamma= 5 with method= BFGS"
+  sigma  1  2  3  4  5  6
+1 1e-06 bm ou bm ou bm bm
+2 1e-05 bm ou bm ou bm bm
+3 1e-04 bm ou bm ou bm bm
+4 1e-03 bm ou bm ou bm bm
+5 1e-02 bm ou bm ou bm bm
+6 1e-01 bm ou bm ou bm bm

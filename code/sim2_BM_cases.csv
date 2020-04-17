@@ -1,0 +1,7 @@
+"","beta0","beta1", "mu", "gamma", "method"
+"1",10,0.5,0,5,"Nelder-Mead"
+"2",5,0.5,0,5,"Nelder-Mead"
+"3",5,1,0,5,"Nelder-Mead"
+"4",10,0.5,0,5,"BFGS"
+"5",5,0.5,0,5,"BFGS"
+"6",5,1,0,5,"BFGS"

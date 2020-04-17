@@ -52,11 +52,7 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma=0.1, d
                 omegas <- seq(0+0.01, 1-0.01, 0.196)
                 omega <- find_optim_omega(omegas, n_obs, dt, Y, beta0, beta1)
             }
-            param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs))
-            data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-            ou_f <- TMB::MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method, DLL="smfret_TMBExports")
-            ou_result <- optim(par = ou_f$par, fn = ou_f$fn, gr = ou_f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method=method)
-
+           
             param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs))
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
             ou_f <- TMB::MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method, DLL="smfret_TMBExports")
