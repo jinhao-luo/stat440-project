@@ -29,7 +29,7 @@ ntheta <- 1 # number of parameter sets per test case
 
 # cycle through test cases
 ou_test_out <- sapply(test_cases, function(ii) {
-  method <- "Nelder-Mead"
+  method <- "BFGS"
   t_gamma <- runif(1, ii, ii + 1)
   t_mu <- rnorm(1, ii)
   t_sigma <- runif(1, ii, ii + 1)
