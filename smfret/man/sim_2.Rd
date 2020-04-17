@@ -10,7 +10,7 @@ sim_2(
   beta1 = 0.5,
   gamma = 1,
   mu = 10,
-  sigma,
+  sigma = 0.1,
   dt = 1,
   n_obs = 99,
   n_dataset = 100,
