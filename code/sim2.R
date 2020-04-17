@@ -2,9 +2,9 @@
 
 require(TMB)
 source("smfret-functions.R")
+source("multi_start.R")
 
 # Compile and load the model.
-# gr_mod <- "main"
 gr_mod <- "builtin"
 # compile(paste0(gr_mod, ".cpp"))
 dyn.load(dynlib(gr_mod))
@@ -25,17 +25,16 @@ ou_param_num <- 3
 #' @param n_dataset Number of dataset to simulate for each `\beta`
 #' @return a vector of picked model
 sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 1,
-                  n_obs = 99, n_dataset = 100) {
+                  n_obs = 99, n_dataset = 100, multi_start = TRUE, method="Nelder-Mead") {
     theta <- list(mu=mu, sigma=sigma, gamma=gamma, t = 1 / gamma, tau = sigma / sqrt(2 * gamma))
     print("reach0")
     models <- replicate(n_dataset, expr = {
-        bm_aic <- NA
         ou_aic <- NA
-        while (is.na(bm_aic) || is.na(ou_aic)) {
-            print("in replicate")
+        bm_aic <- NA
+        while (is.na(ou_aic) || is.na(bm_aic)) {
             Y <- c(NA)
             while (anyNA(Y)) {
-                print("in NA")
+                print("NA")
                 X <- 0
                 if (from == "ou") {
                     X <- ou_sim(gamma, mu, sigma, dt, n_obs)
@@ -46,34 +45,29 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
                 }
                 Y <- y_sim(X, beta0, beta1)
             }
-            print("reach1")
-            # ou_f <- MakeADFun(
-            #     data = list(model_type = "ou", niter = 100, dt = dt, y = Y, beta0 = beta0, beta1 = beta1),
-            #     parameters = list(gamma = 3, mu = 0, sigma = 0.1)
-            # )
-            param <- list(gamma = 100, mu = -10, sigma = 100, X=rep(0, n_obs))
-            data <- list(model_type = "ou", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-            ou_f <- MakeADFun(data = data, parameters = param, random = c("X"), inner.control = list(maxit = 100), silent = TRUE)
 
-            print("reach2")
-            ou_result <- optim(par = ou_f$par, fn = ou_f$fn, gr = ou_f$gr,
-                control = list(maxit = 5000)
-            )
-            print("ou theta hat:")
-            print(ou_result$par)
-            # bm_f <- MakeADFun(
-            #     data=list(model_type="bm",dt=dt, Y=Y, beta0=beta0, beta1=beta1, niter=100),
-            #     parameters=list(sigma=1))
-            param <- list(gamma = 100, mu = -10, sigma = 100, X=rep(0, n_obs))
-            data <- list(model_type = "bm", dt = dt, Y = Y, beta0 = beta0, beta1 = beta1)
-            bm_f <- MakeADFun(data = data, parameters = param, random = c("X"), inner.control = list(maxit = 100), silent = TRUE)
+            omega <- 0
+            if (multi_start) {
+                num_start <- 5
+                start <- 0+0.01
+                end <- 1-0.01
+                omegas <- seq(start, end, (end-start)/num_start)
+                omega <- find_optim_omega(omegas, n_obs, dt, Y, beta0, beta1)
+            }
+            param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
+            data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
+            print("reach6")
+            ou_f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method)
+            print("reach7")
+            ou_result <- optim(par = ou_f$par, fn = ou_f$fn, gr = ou_f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method=method)
+            print("reach8")
 
-            bm_result <- optim(par = bm_f$par, fn = bm_f$fn, gr = bm_f$gr,
-                control = list(maxit = 5000)
-            )
-            print("bm theta hat")
-            print(bm_result$par)
-
+            param <- list(sigma = 1, X=rep(0, n_obs))
+            data <- list(model_type = "bm", dt=dt, Y=Y, beta0 = beta0, beta1 = beta1)
+            bm_f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method)
+            bm_result <- optim(par = bm_f$par, fn = bm_f$fn, gr = bm_f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method=method)
+            
+            print("reach9")
             # calculate AIC, pick model
             ou_aic <- 2*ou_param_num+2*ou_f$fn(par=ou_result$par)
             bm_aic <- 2*bm_param_num+2*bm_f$fn(par= bm_result$par)
@@ -91,27 +85,3 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
     })
     models
 }
-
-# cur_beta0 <- 20
-# cur_beta1 <- 0.5
-# cur_mu <- 20
-# cur_gamma <- 5
-# cur_sigma <- 0.00001
-
-# # simulate from BM
-# test_cases <- data.frame(gamma=c(0.01, 0.1, 1, 10))
-# ou_result <- apply(test_cases, 1, function(info) {
-#     sim_2(from="ou", sigma=cur_sigma, gamma=info[["gamma"]], n_dataset = 4, n_obs = 100, beta0=cur_beta0, beta1=cur_beta1, mu=cur_mu)
-# })
-# print(paste("Simulate from OU with beta0=", cur_beta0, "beta1=", cur_beta1, "mu=", cur_mu, "sigma=", cur_sigma))
-# cbind(test_cases, t(ou_result))
-
-# # simulate from OU
-# test_cases <- data.frame(sigma=c(0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1))
-# bm_result <- apply(test_cases, 1, function(info) {
-#     sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 100, beta0=cur_beta0, beta1=cur_beta1, mu=cur_mu, gamma=cur_gamma)
-# })
-# print(paste("Simulate from OU with beta0=", cur_beta0, "beta1=", cur_beta1, "mu=", cur_mu, "gamma=", cur_gamma))
-# cbind(test_cases, t(bm_result))
-
-

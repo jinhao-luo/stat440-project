@@ -1,4 +1,5 @@
 // data inputs
+DATA_INTEGER(niter);
 DATA_SCALAR(dt); //  Time gap
 DATA_SCALAR(beta0); // beta 0
 DATA_SCALAR(beta1); // beta 1
@@ -16,7 +17,6 @@ int n = y.size();
 vector<Type> X(n);
 X.setZero();
 
-DATA_INTEGER(niter);
 Type res = laplace(f_nll, X, niter);
 
   

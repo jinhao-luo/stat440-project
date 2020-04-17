@@ -23,17 +23,18 @@ test_cases
 # for any set of parameters `theta = (beta, gamma)`.
 
 ntests <- nrow(test_cases) # number of test cases
-ntheta <- 10 # number of parameter sets per test case
+ntheta <- 20 # number of parameter sets per test case
 
 # cycle through test cases
 ou_test_out <- sapply(test_cases, function(ii) {
-  t_gamma <- rexp(1, 1/ii)
-  t_mu <- rexp(1, 1/ii)
-  t_sigma <- rexp(1, 1/ii)
-  beta0 <- 20
+  t_gamma <- runif(1, ii, ii+1)
+  t_mu <- rnorm(1, ii)
+  t_sigma<- runif(1, ii, ii+1)
+  beta0 <- 10
   beta1 <- 1
   dt <- sample(1:10, 1)
-  n_obs <- sample(50:200, 1)
+  # n_obs <- sample(50:200, 1)
+  n_obs <- 99
   ntheta <- 10 # number of parameter sets per test
   # simulate data
   x0 <- rnorm(1, t_mu, sqrt(t_sigma^2/2/t_gamma))
@@ -43,11 +44,12 @@ ou_test_out <- sapply(test_cases, function(ii) {
       X <- ou_sim(t_gamma, t_mu, t_sigma, dt, n_obs, x0)
       Y <- y_sim(X, beta0, beta1)
     }
+  print(Y)
 
   nll_diff <- replicate(ntheta, expr = {
-    gamma <- rexp(1, 1/ii)
-    mu <- rexp(1, 1/ii)
-    sigma <- rexp(1, 1/ii)
+    gamma <- runif(1, 0.1, ii+10)
+    mu <- rnorm(1, 10)
+    sigma<- runif(1, 0.1, ii+10)
 
     nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
 
@@ -68,7 +70,7 @@ cbind(test_cases, max_diff = signif(ou_test_out,2))
 # cycle through test cases
 bm_test_out <- sapply(test_cases, function(ii) {
   t_sigma <- rexp(1, 1/ii)
-  beta0 <- 20
+  beta0 <- 1
   beta1 <- 1
   dt <- sample(1:10, 1)
   n_obs <- sample(50:200, 1)
@@ -81,7 +83,6 @@ bm_test_out <- sapply(test_cases, function(ii) {
     X <- bm_sim(0, t_sigma, dt, n_obs, x0=x0)
     Y <- y_sim(X, beta0, beta1)
   }
-
 
   nll_diff <- replicate(ntheta, expr = {
     sigma <- rexp(1, 1/ii)
@@ -100,3 +101,5 @@ bm_test_out <- sapply(test_cases, function(ii) {
 
 print("Brownian results")
 cbind(test_cases, max_diff = signif(bm_test_out,2))
+
+# TODO: add theta accuracy test
