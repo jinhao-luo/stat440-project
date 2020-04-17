@@ -28,8 +28,6 @@ find_optim_omega <- function(omegas, n_obs, dt, Y, beta0, beta1, method="Nelder-
         return(f$fn(result$par))
     }
     sol <- gridSearch(fun=test_function, levels = list(omegas))
-    print(sol$minfun)
-    print(sol$minlevel)
     omega <- sol$minlevel
     return(omega)
 }

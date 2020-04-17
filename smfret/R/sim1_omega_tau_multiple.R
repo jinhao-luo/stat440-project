@@ -76,7 +76,6 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
     })
 
     theta_hat <- apply(test_output, 2, function(tc) {tc$theta_hat})
-    print(theta_hat)
     # calulate rmse
     rmse <- sapply(rownames(theta_hat), function (j) {
         sqrt(mean((theta_hat[j,]-theta[[j]])^2, na.rm=TRUE))/theta[[j]]
