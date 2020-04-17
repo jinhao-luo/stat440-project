@@ -24,8 +24,8 @@ ou_param_num <- 3
 #' @param n_obs Number of observations to generate.
 #' @param n_dataset Number of dataset to simulate for each `\beta`
 #' @return a vector of picked model
-sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 1,
-                  n_obs = 99, n_dataset = 100) {
+sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma=0.1, dt = 1,
+                  n_obs = 99, n_dataset = 100, multi_start = TRUE, method="Nelder-Mead") {
     theta <- list(mu=mu, sigma=sigma, gamma=gamma, t = 1 / gamma, tau = sigma / sqrt(2 * gamma))
     print("reach0")
     models <- replicate(n_dataset, expr = {
