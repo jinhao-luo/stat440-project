@@ -1,9 +1,4 @@
-#require(TMB)
-#source("R/smfret-functions.R")
 
-# Compile and load the model.
-#gr_mod <- "src/TMB/smfret_TMBExports"
-#dyn.load(dynlib(gr_mod))
 
 context("BM")
 

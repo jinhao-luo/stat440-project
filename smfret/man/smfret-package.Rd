@@ -4,9 +4,9 @@
 \name{smfret-package}
 \alias{smfret}
 \alias{smfret-package}
-\title{smfret: smFRET Simullation}
+\title{smfret: smFRET Parameter Inference}
 \description{
-Simulation of molecular interactions using Brownian motion model and Ornstein-Uhlenbeck process model
+Parameter Inference of molecular interactions using Brownian motion model and Ornstein-Uhlenbeck process model
 }
 \author{
 \strong{Maintainer}: Kar Mei Koo \email{kmkoo@uwaterloo.ca}

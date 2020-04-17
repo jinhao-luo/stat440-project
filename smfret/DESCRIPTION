@@ -1,7 +1,7 @@
 Package: smfret
 Version: 0.0.0.9000
-Title: smFRET Simulation
-Description: Simulation of molecular interactions using Brownian motion model and Ornstein-Uhlenbeck process model 
+Title: smFRET Parameter Inference
+Description: Parameter Inference of molecular interactions using Brownian motion model and Ornstein-Uhlenbeck process model 
 Authors@R: c(person("Kar Mei","Koo",email="kmkoo@uwaterloo.ca",role=c("aut","cre")),
   person("Wanxin","Li",email="w328li@uwaterloo.ca",role="aut"),
   person("Jayden","Luo",email="j57luo@uwaterloo.ca",role="aut"),
@@ -12,7 +12,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.2
 Imports: 
-    TMB (>= 1.7.16)
+    TMB (>= 1.7.16), NMOF, optimCheck
 LinkingTo: 
     TMB
 Suggests: 
