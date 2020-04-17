@@ -1,11 +1,10 @@
 # Unit tests for the **TMB** model `OUProcess`.
 
 require(TMB)
-source("smfret-functions.R")
+source("R/smfret-functions.R")
 
 # Compile and load the model.
-gr_mod <- "main"
-# compile(paste0(gr_mod, ".cpp"))
+gr_mod <- "src/TMB/smfret_TMBExports"
 dyn.load(dynlib(gr_mod))
 
 # Instead of running unit tests with completely random inputs,
