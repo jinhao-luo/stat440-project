@@ -85,8 +85,21 @@ multistart_result[, c("num_multistart","rmse.omega","rmse.mu","rmse.tau",
 The goal here is to investigate on how the value of $(\beta_0, \beta_1)$ could affect the accuracy of inference under the OU model. We setup a experiment with true parameters being $\mu=10$, $\tau=1$ and $\gamma \in \{0.1,1,10\}$. In order to evaluate the accuracy of inference, we simulate 100 dataset for each pair of $(\beta_0, \beta_1)$ and calculated the root mean-squared error(RMSE) of $t_{dec}$, $\mu$ and $\tau$ as measure of accuracy. We first find a initial pair of $(\beta_0, \beta_1)$ such that the RMSE reasonably good. We looked into the simulated dataset when $\gamma=1$(TODO:maybe a graph here). We observed that the values of $X_n$ are around 10 and hence set a initial $beta_1=1$ and $beta_0>10$ such that we have $\beta_0-\beta_1 X_n > 0$ and $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1X_n))$ are more likely to have a large set of values. For $\gamma=1$, we decided to simulate $299$ observations per dataset. For $\gamma=0.1$, since we were not able to get good RMSE with $299$ observations per dataset, we increased to $999$ per dataset. We then perform inference simulations with one of the the $\beta$($\beta_0$ or $\beta_1$) fixed and the other gradually decreasing and observe how RMSE changes.
 
 ## Simulation for Challenge 2
-To start, we simulate from OU process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1, \gamma, \mu$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment. Similary, simulate from BM process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1$. 400 $X_t's$ and $Y_t's$ without NA are generated in each experiment.
+To start, we simulate from OU process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1, \gamma, \mu$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment. Similary, simulate from BM process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1$. 400 $X_t's$ and $Y_t's$ without NA are generated in each experiment. Our setups are as follows:
+OU setup, optimization method is "Nelder Mead", number of observation is 100.
+\begin{itemize}
+\item 1: $\beta_0=10, \beta1=0.5, \tau=1, \mu=0$
+\item 2: $\beta_0=5, \beta1=0.5, \tau=2, \mu=0$
+\item 3: $\beta_0=5, \beta1=1, \tau=2, \mu=0$
+\item 4: $\beta_0=10, \beta1=0.5, \tau=2, \mu=1$
+\end{itemize}
 
+And BM setup, optimization method is "BFGS, number of observation is 400.
+\begin{itemize}
+\item 1: $\beta_0=10, \beta1=0.5, \mu=0, \gamma=5$
+\item 2: $\beta_0=5, \beta1=0.5, \mu=0, \gamma=5$
+\item 3: $\beta_0=5, \beta1=1, \mu=0, \gamma=5$
+\end{itemize}
 
 # Results
 We present and analyze our results with respect to two challenges as follows.
