@@ -1,18 +1,17 @@
 # research direction: whether it is possible to distinguish bound donor-acceptor pairs from free diffusion.
 
 require(TMB)
-source("smfret-functions.R")
-source("multi_start.R")
+source("R/smfret-functions.R")
+source("R/multi_start.R")
 
 # Compile and load the model.
-gr_mod <- "builtin"
-# compile(paste0(gr_mod, ".cpp"))
+gr_mod <- gr_mod <- "src/TMB/smfret_TMBExports"
 dyn.load(dynlib(gr_mod))
 
 bm_param_num <- 1
 ou_param_num <- 3
 
-#' simulation 2
+#' Simulation 2
 #'
 #' @param from simulate X from which model ('ou' or 'bm')
 #' @param beta0 the value of beta0
@@ -24,7 +23,9 @@ ou_param_num <- 3
 #' @param n_obs Number of observations to generate.
 #' @param n_dataset Number of dataset to simulate for each `\beta`
 #' @return a vector of picked model
-sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 1,
+#' @export
+#'
+sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma=0.1, dt = 1,
                   n_obs = 99, n_dataset = 100, multi_start = TRUE, method="Nelder-Mead") {
     theta <- list(mu=mu, sigma=sigma, gamma=gamma, t = 1 / gamma, tau = sigma / sqrt(2 * gamma))
     print("reach0")
@@ -32,9 +33,10 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
         ou_aic <- NA
         bm_aic <- NA
         while (is.na(ou_aic) || is.na(bm_aic)) {
+            print("in replicate")
             Y <- c(NA)
             while (anyNA(Y)) {
-                print("NA")
+                print("in NA")
                 X <- 0
                 if (from == "ou") {
                     X <- ou_sim(gamma, mu, sigma, dt, n_obs)
@@ -48,13 +50,18 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
 
             omega <- 0
             if (multi_start) {
-                num_start <- 5
-                start <- 0+0.01
-                end <- 1-0.01
-                omegas <- seq(start, end, (end-start)/num_start)
+                omegas <- seq(0+0.01, 1-0.01, 0.196)
                 omega <- find_optim_omega(omegas, n_obs, dt, Y, beta0, beta1)
             }
-            param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs)) 
+            param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs))
+            data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
+            print("reach3")
+            ou_f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method)
+            print("reach4")
+            ou_result <- optim(par = ou_f$par, fn = ou_f$fn, gr = ou_f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method=method)
+            print("reach5")
+
+            param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs))
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
             print("reach6")
             ou_f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method)
@@ -66,7 +73,7 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
             data <- list(model_type = "bm", dt=dt, Y=Y, beta0 = beta0, beta1 = beta1)
             bm_f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method)
             bm_result <- optim(par = bm_f$par, fn = bm_f$fn, gr = bm_f$gr, control=list(trace=5, maxit=1000, reltol=1e-8), method=method)
-            
+
             print("reach9")
             # calculate AIC, pick model
             ou_aic <- 2*ou_param_num+2*ou_f$fn(par=ou_result$par)
@@ -74,10 +81,8 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
         }
 
         if (bm_aic < ou_aic) {
-            print("reach4")
             "bm"
         } else if (ou_aic < bm_aic) {
-            print("reach5")
             "ou"
         } else {
             "bm/ou"
@@ -85,3 +90,34 @@ sim_2 <- function(from, beta0 = 20, beta1 = .5, gamma = 1, mu = 10, sigma, dt = 
     })
     models
 }
+
+# 1)
+# test_cases <- data.frame(sigma=c(0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
+# ou_result <- apply(test_cases, 1, function(info) {
+#     sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4, beta0=10, beta1=1)
+# })
+# print("Simulate from OU first time")
+# cbind(test_cases, t(ou_result))
+
+# test_cases <- data.frame(sigma=c(0.001, 0.01, 0.1, 1, 1.1, 1.2, 1.3, 1.4, 1.5))
+# ou_result <- apply(test_cases, 1, function(info) {
+#     sim_2(from="ou", sigma=info[["sigma"]], n_dataset = 4, beta0=10, beta1=1, mu=1, gamma=2)
+# })
+# print("Simulate from OU second time")
+# cbind(test_cases, t(ou_result))
+
+# test_cases <- data.frame(sigma=c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
+# bm_result <- apply(test_cases, 1, function(info) {
+#     sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200, beta0=10, beta1=1)
+# })
+# print("Simulate from BM first time")
+# cbind(test_cases, t(bm_result))
+
+# test_cases <- data.frame(sigma=c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1, sqrt(2), sqrt(5)))
+# bm_result <- apply(test_cases, 1, function(info) {
+#     sim_2(from="bm", sigma=info[["sigma"]], n_dataset = 4, n_obs = 200, beta0=10, beta1=1, mu=1, gamma=2)
+# })
+# print("Simulate from BM second time")
+# cbind(test_cases, t(bm_result))
+
+

@@ -21,3 +21,4 @@ for(i in 1:nrow(all_cases)) {
     capture.output(print(paste("Simulate from OU with beta0=", cur_beta0, "beta1=", cur_beta1, "tau=", cur_tau, "mu=", cur_mu)), file=output_file, append=TRUE)
     capture.output(print(cbind(test_cases, t(ou_result))), file=output_file, append=TRUE)
 }
+

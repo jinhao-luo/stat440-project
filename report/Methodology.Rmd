@@ -3,9 +3,21 @@ title: "Methodology"
 output: pdf_document
 ---
 
-## Methodology
+# Methodology
 
-### Laplace implementation
+## NA handling
+For research direction 2, whenever NA is simulated in $Y_t$ due to large $\lambda$ in $rpois$, we disgard it together with corresponding $X_t$.
+
+## Laplace implementation
 In (todo:equation), we aim to have the $\hat{\theta}$ that maximize $l_{Lap}(\theta|Y)$. In addition, in (todo:equation), we need the value of $X_{\theta}$ for $\hat{\theta}$, this $X_{\theta}$ and $\theta$ have to be optimized simultanously; we use Newton-Raphson method to in Laplace approximation to achieve this.
 
-Also, we compare the results of our self-implementated Laplace approximation with TMB built-in Laplace approximation. ...
+Also, we compare the results of our self-implementated Laplace approximation with TMB built-in Laplace approximation. Despite of similar accuracy as demostrated in Appendix, the built-in Laplace implementatnion is much faster than ours. Thus, we decide to work with the built-in implementation.
+
+## Simulation for research direction 1
+
+## Simulation for research direction 2
+To start, we simulate from OU process. We perform the experiment 4 times for a fixed set of $\beta_0, \beta_1, \gamma, \mu$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment. We observe that for small values of $\sigma_{OU}$, for example $0.00000001, 0.001, 0.01, 0.1, 1$, AIC picks Brownian Motion model after paramter inferences are performed. The threshold for AIC to pick the correct model for $\sigma_{OU}$ lies in somewhere between $1$ and $\sqrt{2}$.
+
+Similary, simulate from Brownian Motion process. We perform the experiment 4 times for a fixed set of $\beta_0, \beta_1$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment. We observe that for small values of $\sigma_{BM}$, for example $0.00000001$, AIC picks OU model after paramter inferences are performed. The threshold for AIC to pick the correct model for $\sigma_{BM}$ lies in somewhere between $0.00000001$ and $0.001$.
+
+The above observations match with our intuition on this research direction. As $\sigma_{OU} \rightarrow 0, \tau \rightarrow 0$, (todo:equation) becomes $X_{t+\Delta{t}}|X_t \sim N(\mu+\omega_\Delta{t}(X_t-\mu))$, which has the same form as (todo: equation) with a scalar $\omega_\Delta{t}$ and a shift $\mu-\omega_\Delta{t}\mu$ applied to $X_t$. Thus it is X_t generated from (todo:equation) can also be interpreted as generated from (todo:equation). Similarily, As $\sigma_{BM} \rightarrow 0$, (todo:equation) becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$, which has the same from as (todo:equation) with $\tau\rightarrow 0$ or $\gamma \rightarrow 1$. Thus it is X_t generated from (todo:equation) can also be interpreted as generated from (todo:equation).

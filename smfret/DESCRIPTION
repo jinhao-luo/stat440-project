@@ -1,13 +1,19 @@
 Package: smfret
-Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: What license it uses
+Title: smFRET Simullation
+Description: Simulation of molecular interactions using Brownian motion model and Ornstein-Uhlenbeck process model 
+Authors@R: c(person("Kar Mei","Koo",email="kmkoo@uwaterloo.ca",role=c("aut","cre")),
+  person("Wanxin","Li",email="w328li@uwaterloo.ca",role="aut"),
+  person("Jayden","Luo",email="j57luo@uwaterloo.ca",role="aut"),
+  person("Yi","Xiang",email="y25xiang@uwaterloo.ca",role="aut"))
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.2
+Imports: 
+    TMB (>= 1.7.16)
+LinkingTo: 
+    TMB
+Suggests: 
+    testthat
