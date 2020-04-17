@@ -39,7 +39,7 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
                 test_function <- function(test_omega) {
                     param <- list(omega= test_omega, mu = 0, tau= 1, X=rep(0, n_obs))
                     data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-                    f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
+                    f <- TMB::MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, DLL="smfret_TMBExports")
                     return(tryCatch({
                         # result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
                         result <- constrOptim(f$par, f$fn, f$gr, control=list(maxit=1000, reltol=1e-8), method=method,
@@ -62,7 +62,7 @@ sim_1 <- function(beta0=10, beta1=0.5, omega= exp(-1), mu = 10, tau= 1, dt = 1,
             }
             param <- list(omega=omega, mu = 0, tau= 1, X=rep(0, n_obs))
             data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-            f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE)
+            f <- TMB::MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, DLL="smfret_TMBExports")
             # result <- optim(par = f$par, fn = f$fn, gr = f$gr, control=list(maxit=1000, reltol=1e-8), method=method)
             result <- constrOptim(f$par, f$fn, f$gr, control=list(maxit=1000, reltol=1e-8), method=method,
                 ui = rbind(c(1,0,0), c(-1,0,0), c(0,0,1)), ci=c(0,-1, 0))
