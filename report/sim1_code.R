@@ -15,7 +15,8 @@ require("smfret")
 #' 	merge result afterwards.
 #' @examples
 #' sim_1_script(out_file="testing.csv", my_ci=1:2) 
-sim_1_script <- function(all_cases=read.csv("sim1_cases_new.csv"), my_ci=1:nrow(all_cases), out_file=paste0("sim1_result_",my_ci, ".csv")) {
+sim_1_script <- function(all_cases=read.csv("sim1_cases_new.csv"), 
+		my_ci=1:nrow(all_cases), out_file=paste0("sim1_result_",my_ci, ".csv")) {
 	my_cases <- all_cases[my_ci,]
 	result <- apply(my_cases, 1, function(tc) {
 		print(tc)

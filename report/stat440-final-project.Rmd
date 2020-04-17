@@ -28,7 +28,7 @@ The challenges of this problem are the following:
 By a simulation study, our contributions include:
 \begin{itemize}
 \item Implemented paramter inferences for BM and OU models and tested likelihoods and estimates by unit tests
-\item Found a set of $\beta's$ to accurately estimate OU parameters and explained how $\beta's$ affect OU parameter estimation
+\item Found a set of $\beta$'s to accurately estimate OU parameters and explained how $\beta$'s affect OU parameter estimation
 \item Found a threshold to distinguish BM simulated data from OU model, vice versa, and explained why the thresholds are reasonable mathematically
 \item Enabled random start in optimization algorithms
 \end{itemize}
@@ -282,6 +282,48 @@ One of the challenges encountered in the project is the efficiency of running si
 
 \newpage
 # Appendix
+
+1. csv for multistart in Methodology
+```{r}
+multistart_result <-read.csv("multi_start_result.csv")
+multistart_result
+```
+
+2. Code to generate results for Challenge 1
+
+(1) Input file
+```{r}
+sim1_cases <- read.csv("sim1_cases_new.csv")
+sim1_cases
+```
+
+(2) Script
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60), code = readLines('sim1_code.R'), eval=FALSE}
+```
+
+3. Code to generate results for Challenge 2 (simulation from OU)
+
+(1) Input file
+```{r}
+sim2_OU_cases <- read.csv('sim2_OU_cases.csv')
+sim2_OU_cases
+```
+
+(2) Script
+```{r, code = readLines('sim2_OU_code.R'), eval=FALSE}
+```
+
+4. Code to generate results for Challenge 2 (simulation from BM)
+(1) Input file
+```{r}
+sim2_BM_cases <- read.csv('sim2_BM_cases.csv')
+sim2_BM_cases
+```
+
+(2) Script
+```{r, code = readLines('sim2_BM_code.R'), eval=FALSE}
+```
 
 \newpage
 # References
