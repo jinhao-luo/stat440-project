@@ -174,8 +174,10 @@ Libretexts. (2019, June 5). Lennard-Jones Potential. Retrieved from https://chem
 
 ## Challenge 1
 
-### why \beta_0 has such lower bounds
-### why \beta_1 has such lower bounds
+### why beta_0 has such lower bounds
+
+### why beta_1 has such lower bounds
+
 ### why n_obs has impact on RMSE
 
 ## Challenge 2
@@ -183,7 +185,7 @@ For experiments simulated from OU, we can see a constant improvement in picking 
 
 For experiments simulated from BM, we can see a general improvement in picking the correct model when $\sigma_{BM}$ goes up, however, the improvement stops at $\sigma_{BM}=3$ for most of the experiments. We analyze in the following two aspects. First of all, when $\sigma_{BM} \rightarrow 0$, equation \ref{eq:2} becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. From the discussion in the previous paragraph, when $\gamma \rightarrow 0$, equation \ref{eq:4} also becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. Thus, if we do parameter inferences relatively well, it will be difficult to tell apart two models. Furthermore, when $\sigma$ becomes too large with respect to $\beta_0$ and $\beta_1$, for example, when $\sigma=3$ with respect to $\beta_0=5$ and $\beta_1=1$, the probability of $X_t$ being large becomes higher. In this case, $exp(\beta_0 -\beta_1 X_t)$ becomes close to 0, and the generated $Y_t$ from Poission equation \ref{eq:1} is more likely to be 0. Consequently, $Y_t$ does not provide enough information to the underlying generated process, and hence difficult to tell apart BM model from OU model.
 
-Another observation to note is that as a general rule, $|\beta_0-\beta_1|$ cannot be too large, otherwise, many NAs from equation \ref{eq:1} will be generated because R cannot handle values $ > e^{22}$. Repetively generating values until no NAs results in the enter process being slow.
+Another observation to note is that as a general rule, $|\beta_0-\beta_1|$ cannot be too large, otherwise, many NAs from equation \ref{eq:1} will be generated because R cannot handle values $> e^{22}$. Repetively generating values until no NAs results in the enter process being slow.
 
 ## Potential improvements in implementation
 ### Other model selection criterion 
