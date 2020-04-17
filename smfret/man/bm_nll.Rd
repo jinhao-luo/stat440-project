@@ -7,15 +7,13 @@
 bm_nll(mu, sigma, Xt, dt)
 }
 \arguments{
-\item{mu}{Scalar mean parameter (see \code{\link[=ou_sim]{ou_sim()}}).}
+\item{mu}{(NOT USED) Scalar mean parameter (see \code{\link[=ou_sim]{ou_sim()}}).}
 
 \item{sigma}{Scalar diffusion parameter (see \code{\link[=ou_sim]{ou_sim()}}).}
 
 \item{Xt}{Vector of \code{n_obs} observations from the OU process.}
 
 \item{dt}{Interobservation time.}
-
-\item{gamma}{Scalar mean reversion parameter (see \code{\link[=ou_sim]{ou_sim()}}).}
 }
 \value{
 The scalar value of the loglikelihood \code{loglik(gamma, mu, sigma | Xt)}.

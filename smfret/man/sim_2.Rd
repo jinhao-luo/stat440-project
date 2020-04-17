@@ -35,7 +35,11 @@ sim_2(
 
 \item{n_obs}{Number of observations to generate.}
 
-\item{n_dataset}{Number of dataset to simulate for each \verb{\\beta}}
+\item{n_dataset}{Number of dataset to simulate for each \code{beta}}
+
+\item{multi_start}{number of multistart to perform on top of \code{optim()}}
+
+\item{method}{passed to \code{optim()}}
 }
 \value{
 a vector of picked model

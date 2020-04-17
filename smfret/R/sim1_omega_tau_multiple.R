@@ -10,12 +10,14 @@ dyn.load(dynlib(gr_mod))
 #'
 #' @param beta0 The value of beta0.
 #' @param beta1 The value of beta1.
-#' @param omega Parameter in Ornstein-Uhlenbeck process.
+#' @param omega parameter in Ornstein-Uhlenbeck process.
 #' @param mu Scalar mean parameter.
 #' @param tau Variance of donor acceptor distance.
 #' @param dt Interobservation time.
 #' @param n_obs Number of observations to generate.
-#' @param n_dataset Number of dataset to simulate for each `\beta`.
+#' @param n_dataset Number of dataset to simulate for each `beta`.
+#' @param num_multistart number of multistart to perform on top of optim
+#' @param method passed to `optim()`
 #' @return A vector of rmse: rmse for inference on each simulated dataset.
 #' @export
 #'

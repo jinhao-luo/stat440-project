@@ -24,7 +24,7 @@ test_that("BM TMB MakeADFun gives same results as `bm_y_nll()` ",{
 
       nll_r <- bm_y_nll(0, sigma, beta0, beta1, X, Y, dt)
 
-      f <- MakeADFun(data = list(model_type = "bm", dt = dt, Y = Y, beta0 = beta0, beta1 = beta1), parameters = list(X=X, sigma = sigma))
+      f <- TMB::MakeADFun(data = list(model_type = "bm", dt = dt, Y = Y, beta0 = beta0, beta1 = beta1), parameters = list(X=X, sigma = sigma), DLL="smfret_TMBExports")
       nll_tmb <- f$fn()
       nll_r - nll_tmb
     })

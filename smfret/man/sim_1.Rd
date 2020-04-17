@@ -22,7 +22,7 @@ sim_1(
 
 \item{beta1}{The value of beta1.}
 
-\item{omega}{Parameter in Ornstein-Uhlenbeck process.}
+\item{omega}{parameter in Ornstein-Uhlenbeck process.}
 
 \item{mu}{Scalar mean parameter.}
 
@@ -32,7 +32,11 @@ sim_1(
 
 \item{n_obs}{Number of observations to generate.}
 
-\item{n_dataset}{Number of dataset to simulate for each \verb{\\beta}.}
+\item{n_dataset}{Number of dataset to simulate for each \code{beta}.}
+
+\item{method}{passed to \code{optim()}}
+
+\item{num_multistart}{number of multistart to perform on top of optim}
 }
 \value{
 A vector of rmse: rmse for inference on each simulated dataset.

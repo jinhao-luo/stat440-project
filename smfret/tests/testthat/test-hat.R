@@ -67,7 +67,7 @@ test_that("OU theta hat relative error falls within tolerance ",{
 
       param <- list(omega= omega, mu = 0, tau= 1, X=rep(0, n_obs))
       data <- list(model_type = "omega_tau", dt = dt, y = Y, beta0 = beta0, beta1 = beta1)
-      ou_f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method)
+      ou_f <- TMB::MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method, DLL="smfret_TMBExports")
 
       ou_result <- optim(par = ou_f$par, fn = ou_f$fn, gr = ou_f$gr, control=list(trace=0, maxit=1000, reltol=1e-8), method=method)
 
@@ -106,7 +106,7 @@ test_that("OU theta hat relative error falls within tolerance ",{
 
       param <- list(sigma = ii, X=rep(0, n_obs))
       data <- list(model_type = "bm", dt=dt, Y=Y, beta0 = beta0, beta1 = beta1)
-      bm_f <- MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method)
+      bm_f <- TMB::MakeADFun(data = data, parameters = param, random = c("X"), silent = TRUE, method=method, DLL="smfret_TMBExports")
       bm_result <- optim(par = bm_f$par, fn = bm_f$fn, gr = bm_f$gr, control=list(trace=0, maxit=1000, reltol=1e-8), method=method)
       oproj <- optim_proj(fun=bm_f$fn, xsol=bm_result$par, maximize=FALSE, plot=TRUE)
 

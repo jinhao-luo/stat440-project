@@ -54,8 +54,8 @@ ou_nll <- function(gamma, mu, sigma, Xt, dt) {
 #' @param gamma Scalar mean reversion parameter (see [ou_sim()]).
 #' @param mu Scalar mean parameter (see [ou_sim()]).
 #' @param sigma Scalar diffusion parameter (see [ou_sim()]).
-#' @param beta0 Scaler intercept parameter for Yt Poisson distribution
-#' @param beta1 Scaler slope parameter for Yt Poisson distribution
+#' @param b0 Scaler intercept parameter for Yt Poisson distribution
+#' @param b1 Scaler slope parameter for Yt Poisson distribution
 #' @param Xt Vector of `n_obs` observations from the OU process.
 #' @param Yt Vector of `n_obs` observations from the OU process.
 #' @param dt Interobservation time.
@@ -87,8 +87,7 @@ bm_sim <- function(mu, sigma, dt, n_obs, x0 = 0) {
 
 #' Negative loglikelihood for the Brownian model Xn.
 #'
-#' @param gamma Scalar mean reversion parameter (see [ou_sim()]).
-#' @param mu Scalar mean parameter (see [ou_sim()]).
+#' @param mu (NOT USED) Scalar mean parameter (see [ou_sim()]). 
 #' @param sigma Scalar diffusion parameter (see [ou_sim()]).
 #' @param Xt Vector of `n_obs` observations from the OU process.
 #' @param dt Interobservation time.
@@ -102,11 +101,10 @@ bm_nll <- function(mu, sigma, Xt, dt) {
 
 #' Negative loglikelihood for the Brownian model Yn.
 #'
-#' @param gamma Scalar mean reversion parameter (see [ou_sim()]).
 #' @param mu Scalar mean parameter (see [ou_sim()]).
 #' @param sigma Scalar diffusion parameter (see [ou_sim()]).
-#' @param beta0 Scaler intercept parameter for Yt Poisson distribution
-#' @param beta1 Scaler slope parameter for Yt Poisson distribution
+#' @param b0 Scaler intercept parameter for Yt Poisson distribution
+#' @param b1 Scaler slope parameter for Yt Poisson distribution
 #' @param Xt Vector of `n_obs` observations from the OU process.
 #' @param Yt Vector of `n_obs` observations from the OU process.
 #' @param dt Interobservation time.

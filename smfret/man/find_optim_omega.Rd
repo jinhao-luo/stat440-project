@@ -27,15 +27,3 @@ the omega returns the minimum theta hat
 \description{
 find_optim_omega
 }
-\examples{
-omegas <- seq(0+0.01, 1-0.01, 0.196)
-n_obs <- 100
-dt <- 1
-Y <- rep(0, 100)
-beta0 <- 10
-beta1 <- 1
-method <- 'BFGS'
-
-# find optimum omega
-omega <- find_optim_omega(omegas, n_obs, dt, Y, beta0, beta1, method=method)
-}

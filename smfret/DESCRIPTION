@@ -1,7 +1,7 @@
 Package: smfret
 Version: 0.0.0.9000
 Title: smFRET Parameter Inference
-Description: Parameter Inference of molecular interactions using Brownian motion model and Ornstein-Uhlenbeck process model 
+Description: Parameter Inference of molecular interactions using Brownian motion model and Ornstein-Uhlenbeck process model.
 Authors@R: c(person("Kar Mei","Koo",email="kmkoo@uwaterloo.ca",role=c("aut","cre")),
   person("Wanxin","Li",email="w328li@uwaterloo.ca",role="aut"),
   person("Jayden","Luo",email="j57luo@uwaterloo.ca",role="aut"),

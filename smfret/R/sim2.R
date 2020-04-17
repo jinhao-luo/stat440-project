@@ -21,7 +21,9 @@ ou_param_num <- 3
 #' @param sigma Scalar diffusion parameter
 #' @param dt Interobservation time.
 #' @param n_obs Number of observations to generate.
-#' @param n_dataset Number of dataset to simulate for each `\beta`
+#' @param n_dataset Number of dataset to simulate for each `beta`
+#' @param multi_start number of multistart to perform on top of `optim()`
+#' @param method passed to `optim()`
 #' @return a vector of picked model
 #' @export
 #'

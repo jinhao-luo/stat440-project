@@ -11,17 +11,15 @@ bm_y_nll(mu, sigma, b0, b1, Xt, Yt, dt)
 
 \item{sigma}{Scalar diffusion parameter (see \code{\link[=ou_sim]{ou_sim()}}).}
 
+\item{b0}{Scaler intercept parameter for Yt Poisson distribution}
+
+\item{b1}{Scaler slope parameter for Yt Poisson distribution}
+
 \item{Xt}{Vector of \code{n_obs} observations from the OU process.}
 
 \item{Yt}{Vector of \code{n_obs} observations from the OU process.}
 
 \item{dt}{Interobservation time.}
-
-\item{gamma}{Scalar mean reversion parameter (see \code{\link[=ou_sim]{ou_sim()}}).}
-
-\item{beta0}{Scaler intercept parameter for Yt Poisson distribution}
-
-\item{beta1}{Scaler slope parameter for Yt Poisson distribution}
 }
 \value{
 The scalar value of the loglikelihood \code{loglik(gamma, mu, sigma | Xt, Yt)}.

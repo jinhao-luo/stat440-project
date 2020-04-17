@@ -1,3 +1,4 @@
+#' @rawNamespace useDynLib(smfret, .registration = TRUE); useDynLib(smfret_TMBExports)
 #' @keywords internal
 "_PACKAGE"
 
@@ -9,5 +10,6 @@
 #' @import NMOF
 #' @import TMB
 #' @import optimCheck
+#' @importFrom stats constrOptim dnorm dpois filter optim rnorm rpois
 #'
 NULL

@@ -49,7 +49,7 @@ test_that("OU TMB MakeADFun gives same results as `ou_y_nll()` ",{
 
       nll_r <- ou_y_nll(gamma, mu, sigma, beta0, beta1, X, Y, dt)
 
-      f <- MakeADFun(data = list(model_type = "ou", dt = dt, y = Y, beta0 = beta0, beta1 = beta1), parameters = list(X =X, gamma = gamma, mu = mu, sigma = sigma))
+      f <- TMB::MakeADFun(data = list(model_type = "ou", dt = dt, y = Y, beta0 = beta0, beta1 = beta1), parameters = list(X =X, gamma = gamma, mu = mu, sigma = sigma), DLL="smfret_TMBExports")
       nll_tmb <- f$fn()
       nll_r - nll_tmb
     })

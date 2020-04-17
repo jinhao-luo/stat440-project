@@ -11,17 +11,6 @@ require(NMOF)
 #' @param method optimization method, default Nelder-Mead
 #' @return the omega returns the minimum theta hat
 #'
-#' @examples
-#' omegas <- seq(0+0.01, 1-0.01, 0.196)
-#' n_obs <- 100
-#' dt <- 1
-#' Y <- rep(0, 100)
-#' beta0 <- 10
-#' beta1 <- 1
-#' method <- 'BFGS'
-#'
-#' # find optimum omega
-#' omega <- find_optim_omega(omegas, n_obs, dt, Y, beta0, beta1, method=method)
 #' @export
 #'
 find_optim_omega <- function(omegas, n_obs, dt, Y, beta0, beta1, method="Nelder-Mead") {
