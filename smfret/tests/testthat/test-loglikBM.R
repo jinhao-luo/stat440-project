@@ -5,7 +5,7 @@ source("R/smfret-functions.R")
 gr_mod <- "src/TMB/smfret_TMBExports"
 dyn.load(dynlib(gr_mod))
 
-context("BM_Sim")
+context("BM")
 
 test_that("BM TMB MakeADFun gives same results as `bm_y_nll()` ",{
   # cycle through test cases
@@ -33,11 +33,11 @@ test_that("BM TMB MakeADFun gives same results as `bm_y_nll()` ",{
 
       f <- MakeADFun(data = list(model_type = "bm", dt = dt, Y = Y, beta0 = beta0, beta1 = beta1), parameters = list(X=X, sigma = sigma))
       nll_tmb <- f$fn()
-      expect_equal(nll_r, nll_tmb)
+      nll_r - nll_tmb
     })
     # `nll_diff` should contain a vector of `ntheta` identical values
     # the following checks that they are all equal,
     # i.e., that the largest difference between any two is very small
-    #max(abs(diff(nll_diff)))
+    expect_equal(max(abs(diff(nll_diff))),0,tolerance=1e-3)
   })
 })
