@@ -3,7 +3,7 @@ source("sim1_omega_tau_multiple.R")
 
 all_cases <- read.csv("sim1_cases_new.csv")
 # change the line below to your test cases
-my_ci <- 16:18
+my_ci <- 19:33
 
 my_cases <- all_cases[my_ci,]
 my_cases
