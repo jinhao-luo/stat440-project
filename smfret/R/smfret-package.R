@@ -8,4 +8,5 @@
 ## usethis namespace: end
 #' @import NMOF
 #' @import TMB
+#' @import optimCheck
 NULL
