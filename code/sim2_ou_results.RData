@@ -1,0 +1,12 @@
+[1] "Simulate from OU with beta0= 10 beta1= 0.5 tau= 1 mu= 0"
+  gamma  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+1  0.01 bm ou bm ou ou bm ou bm ou bm bm ou ou bm ou ou bm bm ou bm
+[1] "Simulate from OU with beta0= 5 beta1= 0.5 tau= 2 mu= 0"
+  gamma  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+1  0.01 ou bm bm ou bm bm ou bm ou ou bm bm ou ou bm ou bm bm bm bm
+[1] "Simulate from OU with beta0= 5 beta1= 1 tau= 2 mu= 0"
+  gamma  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+1  0.01 bm ou bm ou bm ou bm ou bm ou bm bm ou ou ou bm bm ou ou ou
+[1] "Simulate from OU with beta0= 10 beta1= 0.5 tau= 2 mu= 1"
+  gamma  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+1  0.01 bm ou ou ou bm bm ou ou ou bm bm bm bm bm bm bm bm ou bm ou
