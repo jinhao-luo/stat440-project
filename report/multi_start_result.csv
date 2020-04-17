@@ -1,0 +1,4 @@
+"beta0","beta1","gamma","n_dataset","n_obs","num_multistart","theta.omega","theta.mu","theta.tau","theta.t","theta.gamma","theta.sigma","rmse.omega","rmse.mu","rmse.tau","rmse.gamma","rmse.t","rmse.sigma"
+15,1,1,100,299,1,0.367879441171442,10,1,1,1,1.4142135623731,1.5,1.2,11,0.88,330,0.19
+15,1,1,100,299,10,0.367879441171442,10,1,1,1,1.4142135623731,0.15,0.0095,0.049,0.15,0.15,0.065
+
