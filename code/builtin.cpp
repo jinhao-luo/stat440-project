@@ -30,6 +30,36 @@ Type objective_function<Type>::operator()()
 		Type res = f_nll(X);
 		return res;
 	}
+	else if (model_type == "omega_tau")
+	{
+
+		// data inputs
+		DATA_SCALAR(dt);	//  Time gap
+		DATA_SCALAR(beta0); // beta 0
+		DATA_SCALAR(beta1); // beta 1
+		DATA_VECTOR(y);		// number of photons recorded
+
+		// Parameter inputs
+		PARAMETER(omega); // number of photons recorded
+		PARAMETER(mu);	  // parameter estimated
+		PARAMETER(tau);	  // parameter estimated
+
+		int N = X.size();
+		// computes beta0 - X * beta1
+		vector<Type> x_beta = beta0 - beta1 * X;
+		// computes (gamma_n*( beta0 - X * beta1 )-exp(beta0 - X * beta1 ))
+		Type nll = (exp(x_beta) - y * x_beta).sum();
+
+		// Calculate sigma for OU process
+		Type sigma_ou = tau * sqrt(1 - omega * omega);
+
+		for (int i = 1; i < N; i++)
+		{
+			Type mu_ou = mu + omega * (X[i - 1] - mu);
+			nll -= dnorm(X[i], mu_ou, sigma_ou, true); // todo: check later
+		}
+		return nll;
+	}
 	else if (model_type == "bm")
 	{
 		// data inputs
