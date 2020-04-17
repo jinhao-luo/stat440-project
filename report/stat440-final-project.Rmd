@@ -28,8 +28,8 @@ The challenges of this problem are the following:
 By a simulation study, our contributions include:
 \begin{itemize}
 \item Implemented paramter inferences for BM and OU models and tested likelihoods and estimates by unit tests
-\item Found a set of $\beta's$ to accurately estimate OU parameters and explained how $\beta's$ affect OU parameter estiation
-\item Found a threshold to ditinguish BM simulated data from OU model, vice versa, and explained why the thresholds are reasonable mathematically
+\item Found a set of $\beta's$ to accurately estimate OU parameters and explained how $\beta's$ affect OU parameter estimation
+\item Found a threshold to distinguish BM simulated data from OU model, vice versa, and explained why the thresholds are reasonable mathematically
 \item Enabled random start in optimization algorithms
 \end{itemize}
 
