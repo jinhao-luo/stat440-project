@@ -3,25 +3,33 @@ title: "Stat440 Final Project"
 subtitle: "Dynamical Analysis of Molecular Interactions"
 output: pdf_document
 author: Karmei Koo (kmkoo) Wanxin Li (w328li) Jayden Luo (j57luo) Yi Xiang (y25xiang)
+bibliography: ["ref.bib"]
+biblio-style: "apalike"
+link-citations: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 # Abstract
-Fluorescence resonance energy transfer (FRET) has been used to study biological structures and monitor the activities of molecules (Lemke, Deniz, & Groarke, 2016). However, some conformational changes are difficult to detect using ensemble FRET. In order to understand the interaction at single molecule level, single-molecule fluorescence resonance energy transfer (smFRET) is developed to probe the detailed kinetics of structure changes within a single molecule (Ha, 2001). By using this revolutionized technique, scientists unlock the opportunities to research more about protein folding-unfolding, protein conformation dynamics, ion channel dynamics, receptor-ligand interactions, nucleic acid structure and conformation, vesicle fusion, and force induced conformational changes (Sasmal, Pulido, Kasal, & Huang, 2016). All the new discoveries would reveal the mechanism of diseases at the cellular level (Ideker & Sharan, 1970). Current smFRET research employs Brownian Motion (BM) in modelling free diffusion state (Wallace & Atzberger, 2017) and Ornstein-Uhlenbeck (OU) process to model the bonding state where there is a consistent bond with stochastic perturbations between donor and acceptor (Yang, Witkoskie, & Cao, 2002). One of the remaining challenges of smFRET modelling is whether it is possible to differentiate between free diffusion and bound donor-acceptor pairs. Another challenge is whether we can detect binding and unbinding events. To do so, a simplified experiment setup as follows. The number of photons at time follows a distribution: $Y_n \stackrel{ind}{\sim} Poisson(exp(\beta_0+\beta_1 X_t))$, where $X_t$  is the true donor-acceptor distance modelled by BM and OU process.
+Fluorescence resonance energy transfer (FRET) has been used to study biological structures and monitor the activities of molecules [@lemke2016forster]. However, some conformational changes are difficult to detect using ensemble FRET. In order to understand the interaction at single molecule level, single-molecule fluorescence resonance energy transfer (smFRET) is developed to probe the detailed kinetics of structure changes within a single molecule [@ha2001single]. By using this revolutionized technique, scientists unlock the opportunities to research more about protein folding-unfolding, protein conformation dynamics, ion channel dynamics, receptor-ligand interactions, nucleic acid structure and conformation, vesicle fusion, and force induced conformational changes [@sasmal2016single]. All the new discoveries would reveal the mechanism of diseases at the cellular level [@ideker2008protein]. Current smFRET research employs Brownian Motion (BM) in modelling free diffusion state [@wallace2017forster] and Ornstein-Uhlenbeck (OU) process to model the bonding state where there is a consistent bond with stochastic perturbations between donor and acceptor [@yang2002single]. One of the remaining challenges of smFRET modelling is whether it is possible to differentiate between free diffusion and bound donor-acceptor pairs. Another challenge is whether we can detect binding and unbinding events. To do so, a simplified experiment setup as follows. The number of photons at time follows a distribution: 
+\begin{equation} \label{eq:1} 
+Y_n \stackrel{ind}{\sim} Poisson(exp(\beta_0+\beta_1 X_t))
+\end{equation} 
+
+where $X_t$  is the true donor-acceptor distance modelled by BM and OU process.
 
 The challenges of this problem are the following:
 \begin{itemize}
-\item How to set up experiments so that OU parameters can be accurately estimated
-\item Investigate on whether and if applicable, when it is possible to identify the simulation model by combining parameter inferences and model selection criteria.
+\item Challenge 1: How to set up experiments so that OU parameters can be accurately estimated
+\item Challenge 2: Investigate on whether and if applicable, when it is possible to identify the simulation model by combining parameter inferences and model selection criteria.
 \end{itemize}
 
 By a simulation study, our contributions include:
 \begin{itemize}
 \item Implemented paramter inferences for BM and OU models and tested likelihoods and estimates by unit tests
 \item Found a set of $\beta's$ to accurately estimate OU parameters and explained how $\beta's$ affect OU parameter estiation
-\item Found a threshold to ditinguish BM simulated data from OU model, vice versa, and explained why the thresholds are reasonable mathematically.
+\item Found a threshold to ditinguish BM simulated data from OU model, vice versa, and explained why the thresholds are reasonable mathematically
 \item Compared the results generated by different optimization techniques
 \item Enabled random start in optimization algorithms
 \end{itemize}
@@ -31,7 +39,7 @@ By a simulation study, our contributions include:
 ## Brownian Motion  
 BM is widely used to model the donor-acceptor distance during free diffusion in the molecular environment.The random flow of molecular motion is subtained by collision of moving molecules. In our dynamical analysis, $X_{t}$ is denoted as the donar-acceptor distance at time t. It is a Gaussian Markov process with the following transition density:
 
-$$ X_{t+\Delta t}|X_{t} = N(X_{t}, \sigma^2 \Delta t)$$  
+\begin{equation} \label{eq:2} X_{t+\Delta t}|X_{t} = N(X_{t}, \sigma^2 \Delta t) \end{equation}  
 
 Every subsequent variation in distance by an increment of $\Delta t$ has a mean-reverting nature. That is, the donor-acceptor distance in the next instance revolves around the mean of the process in various direction. In BM model, the mean is set as the current-time donor-aceptor distance. With the process involving Markov element, the sequence of possible molecular motions is only current-state dependent, and it is often refered to as memoryless. The collection of the independent processes at each instance $\Delta t$, are recognised as jointly Gaussian (normal).  
 
@@ -42,10 +50,10 @@ However, the many-body interactions that yield the random pattern cannot be solv
 ### Ornstein-Uhlenbeck Process 
 Ornstein-Uhlenbeck process is further developed from BM by L. S. Ornstein and G. E. Uhlenbeck.[1]
 The OU process is a stochastic Gaussian process with continuous paths. The OU process is defined as the following stochastic differential equation: 
-\begin{equation} \label{eq:2} dX_t = \gamma (\mu - X_t) dt + \sigma dW_t \end{equation} 
+\begin{equation} \label{eq:3} dX_t = \gamma (\mu - X_t) dt + \sigma dW_t \end{equation} 
 Where $W_t$ is a standard BM on $t \in (0, \infty),\gamma > 0, \sigma > 0$
 $X_t$ is a stationary Gaussian Markov process with transition density: 
-\begin{equation} \label{eq:3} X_{t+\Delta t}|X_{t} \sim N(\mu + \omega_{\Delta t} (X_{t} - \mu), \tau^2(1- \omega_{\Delta t}^2)) \end{equation} 
+\begin{equation} \label{eq:4} X_{t+\Delta t}|X_{t} \sim N(\mu + \omega_{\Delta t} (X_{t} - \mu), \tau^2(1- \omega_{\Delta t}^2)) \end{equation} 
 where $\omega_{\Delta t} = exp(-\gamma \Delta t)$ and $\tau^2 = \sigma^2/(2 \gamma)$.
 Compared to BM model, the OU process includes more factors from the environment that can impact the change of the distance. The OU process has four components to describe the molecule interactions which are $\gamma$, $\mu$, $\sigma$, and $dW_t$.The interpretation of $\gamma$ is the rate of mean reversion. The OU process shares mean reversion nature with BM. This property allows that the distance will eventually revert to the long-run average.The rate indicates how strong the distance will react toward the attractor. $\mu$ is the asymptotic mean of "bond" length. $\sigma$ is the parameter showing the volatility of noise. (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4898467/). The OU process represents how molecule move towards the attractors $\mu$ with BM. 
 
@@ -55,10 +63,10 @@ One of the downsides of OU process is that a very small amount of variation such
 # Methodology
 
 ## NA handling
-For research direction 2, whenever NA is simulated in $Y_t$ due to large $\lambda$ in $rpois$, we disgard it together with corresponding $X_t$.
+For Challenge 2, whenever NA is simulated in $Y_t$ due to large $\lambda$ in $rpois$, we disgard it together with corresponding $X_t$.
 
 ## Laplace implementation
-In (todo:equation), we aim to have the $\hat{\theta}$ that maximize $l_{Lap}(\theta|Y)$. In addition, in (todo:equation), we need the value of $X_{\theta}$ for $\hat{\theta}$, this $X_{\theta}$ and $\theta$ have to be optimized simultanously; we use Newton-Raphson method to in Laplace approximation to achieve this.
+In MLE, we aim to have the $\hat{\theta}$ that maximize $l_{Lap}(\theta|Y)$. In addition, in $X_{\theta}= \text{argmax}_{X} l(\theta|X, Y)$, we need the value of $X_{\theta}$ for $\hat{\theta}$, this $X_{\theta}$ and $\theta$ have to be optimized simultanously; we use Newton-Raphson method to in Laplace approximation to achieve this.
 
 Also, we compare the results of our self-implementated Laplace approximation with TMB's built-in Laplace approximation. Despite of similar accuracy as demostrated in Appendix, the built-in Laplace implementatnion is much faster than ours. Thus, we decide to work with the built-in implementation.
 
@@ -73,20 +81,30 @@ multistart_result[, c("num_multistart","rmse.omega","rmse.mu","rmse.tau",
                       "rmse.gamma","rmse.t","rmse.sigma")]
 ```
 
-## Simulation for research direction 1
+## Simulation for Challenge 1
 The goal here is to investigate on how the value of $(\beta_0, \beta_1)$ could affect the accuracy of inference under the OU model. We setup a experiment with true parameters being $\mu=10$, $\tau=1$ and $\gamma \in \{0.1,1,10\}$. In order to evaluate the accuracy of inference, we simulate 100 dataset for each pair of $(\beta_0, \beta_1)$ and calculated the root mean-squared error(RMSE) of $t_{dec}$, $\mu$ and $\tau$ as measure of accuracy. We first find a initial pair of $(\beta_0, \beta_1)$ such that the RMSE reasonably good. We looked into the simulated dataset when $\gamma=1$(TODO:maybe a graph here). We observed that the values of $X_n$ are around 10 and hence set a initial $beta_1=1$ and $beta_0>10$ such that we have $\beta_0-\beta_1 X_n > 0$ and $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1X_n))$ are more likely to have a large set of values. For $\gamma=1$, we decided to simulate $299$ observations per dataset. For $\gamma=0.1$, since we were not able to get good RMSE with $299$ observations per dataset, we increased to $999$ per dataset. We then perform inference simulations with one of the the $\beta$($\beta_0$ or $\beta_1$) fixed and the other gradually decreasing and observe how RMSE changes.
 
-## Simulation for research direction 2
-To start, we simulate from OU process. We perform the experiment 4 times for a fixed set of $\beta_0, \beta_1, \gamma, \mu$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment. We observe that for small values of $\sigma_{OU}$, for example $0.00000001, 0.001, 0.01, 0.1, 1$, AIC picks BM model after paramter inferences are performed. The threshold for AIC to pick the correct model for $\sigma_{OU}$ lies in somewhere between $1$ and $\sqrt{2}$.
+## Simulation for Challenge 2
+To start, we simulate from OU process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1, \gamma, \mu$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment. Similary, simulate from BM process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1$. 400 $X_t's$ and $Y_t's$ without NA are generated in each experiment. Our setups are as follows:
+OU setup, optimization method is "Nelder Mead", number of observation is 100.
+\begin{itemize}
+\item 1: $\beta_0=10, \beta1=0.5, \tau=1, \mu=0$
+\item 2: $\beta_0=5, \beta1=0.5, \tau=2, \mu=0$
+\item 3: $\beta_0=5, \beta1=1, \tau=2, \mu=0$
+\item 4: $\beta_0=10, \beta1=0.5, \tau=2, \mu=1$
+\end{itemize}
 
-Similary, simulate from BM process. We perform the experiment 4 times for a fixed set of $\beta_0, \beta_1$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment. We observe that for small values of $\sigma_{BM}$, for example $0.00000001$, AIC picks OU model after paramter inferences are performed. The threshold for AIC to pick the correct model for $\sigma_{BM}$ lies in somewhere between $0.00000001$ and $0.001$.
-
-The above observations match with our intuition on this research direction. As $\sigma_{OU} \rightarrow 0, \tau \rightarrow 0$, (todo:equation) becomes $X_{t+\Delta{t}}|X_t \sim N(\mu+\omega_\Delta{t}(X_t-\mu))$, which has the same form as (todo: equation) with a scalar $\omega_\Delta{t}$ and a shift $\mu-\omega_\Delta{t}\mu$ applied to $X_t$. Thus it is X_t generated from (todo:equation) can also be interpreted as generated from (todo:equation). Similarily, As $\sigma_{BM} \rightarrow 0$, (todo:equation) becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$, which has the same from as (todo:equation) with $\tau\rightarrow 0$ or $\gamma \rightarrow 1$. Thus it is X_t generated from (todo:equation) can also be interpreted as generated from (todo:equation).
+And BM setup, optimization method is "BFGS, number of observation is 400.
+\begin{itemize}
+\item 1: $\beta_0=10, \beta1=0.5, \mu=0, \gamma=5$
+\item 2: $\beta_0=5, \beta1=0.5, \mu=0, \gamma=5$
+\item 3: $\beta_0=5, \beta1=1, \mu=0, \gamma=5$
+\end{itemize}
 
 # Results
-We present and analyze our results with respect to two research directions as follows.
+We present and analyze our results with respect to two challenges as follows.
 
-## Research direction 1
+## Challenge 1
 The result of our simulations are as follows:
 ```{r}
 sim1_result <- read.csv("sim1_result.csv")
@@ -96,24 +114,28 @@ show_col <- c("beta0", "beta1", "n_obs", "theta.mu", "theta.t", "theta.tau",
 sim1_result <- sim1_result[with(sim1_result, order(-beta1, -beta0)),]
 ```
 
-Below is the simulation result with $\gamma=1$. We were able to get $\text{RMSE}_\theta<1\%$ and $\text{RMSE}_\tau<10\%$ but $\text{RMSE}_t<20\%$. The result shows that when $\beta_1=1$ the minimum value of $\beta_0$ to maintain a good RMSE is between $11$ and $12$. The result shows that when $\beta_0=15$ the minimum value of $\beta_1$ to maintain a good RMSE is between $0.8$ and $1$. 
+### gamma=1
+
+Below is the simulation result with $\gamma=1$. We were able to get $\text{RMSE}_\theta<1\%$ and $\text{RMSE}_\tau<10\%$ but $\text{RMSE}_t<20\%$ only. The result shows that when $\beta_1=1$ the minimum value of $\beta_0$ to maintain a good RMSE is between $11$ and $12$. The result shows that when $\beta_0=15$ the minimum value of $\beta_1$ to maintain a good RMSE is between $0.8$ and $1$. 
 ```{r}
 signif(sim1_result[sim1_result[,"gamma"]==1, show_col], 3)
 ```
 
-The simulation result with $\gamma=1$ is shown below. In this setup, we were able to get $\text{RMSE}_\theta<5\%$ and $\text{RMSE}_\tau<10\%$ but $\text{RMSE}_t<20\%$. Thee result shows that our model were not able to achieve good accuracy when there are only $299$ observations in the dataset. However, with the number of observations being $999$, the model were able to get much better $RMSE$. In this setup, the minimum value of $\beta_0$ for good accuracy is between $9$ and $11$ when $\beta_1=1$, and the minimum value of $\beta_1$ for good accuracy is between $0.9$ and $1$.
+### gamma=0.1
+
+The simulation result with $\gamma=1$ is shown below. In this setup, we were able to get $\text{RMSE}_\theta<5\%$ and $\text{RMSE}_\tau<10\%$ but $\text{RMSE}_t<20\%$ only. Thee result shows that our model were not able to achieve good accuracy when there are only $299$ observations in the dataset. However, with the number of observations being $999$, the model were able to get much better $RMSE$. In this setup, the minimum value of $\beta_0$ for good accuracy is between $9$ and $11$ when $\beta_1=1$, and the minimum value of $\beta_1$ for good accuracy is between $0.9$ and $1$.
 ```{r}
 signif(sim1_result[sim1_result[,"gamma"]==0.1, show_col], 3) 
 ```
 
+### gamma=10
+For $\gamma=10$, as shown below, we were able to get $\text{RMSE}_\theta<1\%$ and $\text{RMSE}_\tau<10\%$ but not able to estimate parameter $t$ nicely even with $999$ observations per dataset. The lower bound for $\beta_0$ for a good $\text{RMSE}_\tau$ is between $11$ and $12$ and the lower bound for $\beta_1$ for good $\text{RMSE}_\tau$ is between $0.6$ and $0.8$.
 ```{r}
 signif(sim1_result[sim1_result[,"gamma"]==10, show_col], 3) 
 ```
-Generally, under the parameter setup $\mu=10$ and $\tau=1$, when $\beta_1=1$ and $\beta_0<15$, the RMSE become bigger. Also, when $\beta_0=15$ and $\beta_1<1$, RMSEs become bigger. 
-In addition, we observed that when $\gamma\in{1,10}$, shrinking $\beta_0$ causes a more significant increase in $\text{RMSE}_\mu$ compared to when $\gamma=0.1$.
 
 
-## Research direction 2
+## Challenge 2
 
 ```{r}
 sim2_OU_result <- read.csv("sim2_table1.csv", check.names=FALSE)
@@ -166,19 +188,24 @@ However, Lennard-Jones potential is not designated to model donor-acceptor inter
 
 Libretexts. (2019, June 5). Lennard-Jones Potential. Retrieved from https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Supplemental_Modules_(Physical_and_Theoretical_Chemistry)/Physical_Properties_of_Matter/Atomic_and_Molecular_Properties/Intermolecular_Forces/Specific_Interactions/Lennard-Jones_Potential
 
-## Research Direction 1
+## Challenge 1
 
+### why beta_0 has such lower bounds
 
-## Research Direction 2
-For experiments simulated from OU, we can see a constant improvement in picking the correct model when $\gamma$ goes up. As $\gamma\rightarrow 0$, $\omega_{\Delta{t}}\rightarrow 1$ and $\tau$ is still a constant, (todo: equation) becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$,which is in the same form as (todo:equation). Thus, it is difficult to distinguish the OU simulation from the BM model. As $\gamma$ goes up, $\omega_{\Delta{t}}\rightarrow 0$, two model equations differ in mean and variance, and hence becomes easier to distinguish.
+### why beta_1 has such lower bounds
 
-For experiments simulated from BM, we can see a general improvement in picking the correct model when $\sigma_{BM}$ goes up, however, the improvement stops at $\sigma_{BM}=3$ for most of the experiments. We analyze in the following two aspects. First of all, when $\sigma_{BM} \rightarrow 0$, (todo:equation) becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. From the discussion in the previous paragraph, when $\gamma \rightarrow 0$, (todo:equation) also becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. Thus, if we do parameter inferences relatively well, it will be difficult to tell apart two models. Furthermore, when $\sigma$ becomes too large with respect to $\beta_0$ and $\beta_1$, for example, when $\sigma=3$ with respect to $\beta_0=5$ and $\beta_1=1$, the probability of $X_t$ being large becomes higher. In this case, $exp(\beta_0 -\beta_1 X_t)$ becomes close to 0, and the generated $Y_t$ from Poission (todo:equation) is more likely to be 0. Consequently, $Y_t$ does not provide enough information to the underlying generated process, and hence difficult to tell apart BM model from OU model.
+### why n_obs has impact on RMSE
 
-Another observation to note is that as a general rule, $|\beta_0-\beta_1|$ cannot be too large, otherwise, many NAs from (todo:equation) will be generated because R cannot handle values $ > e^{22}$ (todo:checkthisvalue). Repetively generating values until no NAs results in the enter process being slow.
+## Challenge 2
+For experiments simulated from OU, we can see a constant improvement in picking the correct model when $\gamma$ goes up. As $\gamma\rightarrow 0$, $\omega_{\Delta{t}}\rightarrow 1$ and $\tau$ is still a constant, equation \ref{eq:4} becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$,which is in the same form as equation \ref{eq:2}. Thus, it is difficult to distinguish the OU simulation from the BM model. As $\gamma$ goes up, $\omega_{\Delta{t}}\rightarrow 0$, two model equations differ in mean and variance, and hence becomes easier to distinguish.
+
+For experiments simulated from BM, we can see a general improvement in picking the correct model when $\sigma_{BM}$ goes up, however, the improvement stops at $\sigma_{BM}=3$ for most of the experiments. We analyze in the following two aspects. First of all, when $\sigma_{BM} \rightarrow 0$, equation \ref{eq:2} becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. From the discussion in the previous paragraph, when $\gamma \rightarrow 0$, equation \ref{eq:4} also becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. Thus, if we do parameter inferences relatively well, it will be difficult to tell apart two models. Furthermore, when $\sigma$ becomes too large with respect to $\beta_0$ and $\beta_1$, for example, when $\sigma=3$ with respect to $\beta_0=5$ and $\beta_1=1$, the probability of $X_t$ being large becomes higher. In this case, $exp(\beta_0 -\beta_1 X_t)$ becomes close to 0, and the generated $Y_t$ from Poission equation \ref{eq:1} is more likely to be 0. Consequently, $Y_t$ does not provide enough information to the underlying generated process, and hence difficult to tell apart BM model from OU model.
+
+Another observation to note is that as a general rule, $|\beta_0-\beta_1|$ cannot be too large, otherwise, many NAs from equation \ref{eq:1} will be generated because R cannot handle values $> e^{22}$. Repetively generating values until no NAs results in the enter process being slow.
 
 ## Potential improvements in implementation
 ### Other model selection criterion 
-We can consider other model selection criteria for research direction 2. For example, AIC and Mallow CP. Using a weighted of different criteria for model selection makes the result less biased. 
+We can consider other model selection criteria for Challenge 2. For example, AIC and Mallow CP. Using a weighted of different criteria for model selection makes the result less biased. 
 
 ### Random start for BM model
 As discussed in the methodology section, random. We figured out how to implement random start for OU model by reparameterization. Consequently, the accuracy of OU inferences has improved sigfinicantly.
