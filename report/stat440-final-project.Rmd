@@ -29,8 +29,8 @@ The challenges of this problem are the following:
 
 By a simulation study, our contributions include:
 \begin{itemize}
-\item Implemented paramter inferences for BM and OU models and tested likelihoods and estimates by unit tests
-\item Found a set of $\beta$'s to accurately estimate OU parameters and explained how $\beta$'s affect OU parameter estimation
+\item Implemented parameter inferences for BM and OU models and tested likelihoods and estimates by unit tests
+\item Found a set of $\beta$s to accurately estimate OU parameters and explained how $\beta$s affect OU parameter estimation
 \item Found a threshold to distinguish BM simulated data from OU model, vice versa, and explained why the thresholds are reasonable mathematically
 \item Enabled random start in optimization algorithms
 \end{itemize}
@@ -63,14 +63,14 @@ One of the downsides of OU process is that a very small amount of variation such
 # Methodology
 
 ## Laplace Implementation
-Using MLE, we aim to estimate the $\hat{\theta}$ that maximize $l(\theta|X, Y)$, which can be approximiated by
-$$ l(\theta|X, Y)\approx l_{LAP}(\theta|Y) = l(\theta|\hat{X_{\theta}}, Y)-1/2*log|H_{\theta}|$$
-$l_{Lap}(\theta|Y)$. $\hat{\theta}$ is dependent upon $\hat{X_{\theta}}$. In addition, in $X_{\theta}= \text{argmax}_{X} l(\theta|X, Y)$, we need the value of $X_{\theta}$ for $\hat{\theta}$, thus $X_{\theta}$ and $\theta$ have to be optimized simultanously; we use Newton's method to in Laplace approximation to achieve this.
+Using MLE, we aim to estimate the $\hat{\theta}$ that maximize $l(\theta|X)$, which can be approximiated by
+$$ l(\theta|X, Y)\approx l_{Lap}(\theta|Y) = l(\theta|\hat{X_{\theta}}, Y)-1/2*log|H_{\theta}|$$
+where $H_{\theta} = \frac{\partial^2}{\partial X \partial X'}l(\theta|\hat{X_{\theta}}, Y)$. $\hat{\theta}$ is dependent upon $\hat{X_{\theta}}$. In addition, in $\hat{X_{\theta}}= \text{argmax}_{X} l(\theta|X, Y)$, we need the value of $X_{\theta}$ for $\hat{\theta}$, thus $X_{\theta}$ and $\theta$ have to be optimized simultanously; we use Newton's method in Laplace approximation to achieve this.
 
-Also, we compare the results of our self-implementated Laplace approximation with TMB's built-in Laplace approximation. Despite of similar accuracies as demostrated in Appendix, the built-in Laplace implementation is much faster than ours. Thus, we decide to work with the built-in implementation.
+We intially implemented Laplace approximation by ourselves. However, we later found that the TMB built-in Laplace approximation is much faster than ours. Thus, we decide to work with the built-in implementation.
 
 ## Multi-start Optimization
-We initially implemented our likelihood function under the OU model in TMB using $(\mu, \sigma, \gamma)$ as parameters. However, from our experiments we found that using the R method `optim()` does not produce satisfiable inference result regardless of the choice of method e.g. BFGS and Nelder-Mead. In addition, we noticed that the passing different initial parameter values  to `optim()` can caused very different inference results. Therefore we implemented a multi-start on top of `optim()`. We believed that performing multi-start with a parameter that has a lower bound and upper bound such as $\omega$ is more effective as the boundary allow us to find maximum gap between different starting points. Therefore we implemented another likelihood implementation using $(\omega, \sigma, \tau)$ as parameters. Below is a RMSE comparison between single start and multi-start.
+We initially implemented our likelihood function under the OU model in TMB using $(\mu, \sigma, \gamma)$ as parameters. However, from our experiments we found that using the R method `optim()` does not produce satisfiable inference result regardless of the choice of method e.g. BFGS and Nelder-Mead. In addition, we noticed that the passing different initial parameter values  to `optim()` can cause very different inference results. Therefore we implemented a multi-start on top of `optim()`. We believed that performing multi-start with a parameter that has a lower bound and upper bound such as $\omega$ is more effective as the boundary allow us to find maximum gap between different starting points. Therefore we implemented another likelihood implementation using $(\omega, \sigma, \tau)$ as parameters. Below is a RMSE comparison between single start and multi-start.
 ```{r}
 multistart_result <-read.csv("multi_start_result.csv")
 multistart_result[, c("num_multistart","rmse.omega","rmse.mu","rmse.tau",
@@ -78,10 +78,10 @@ multistart_result[, c("num_multistart","rmse.omega","rmse.mu","rmse.tau",
 ```
 
 ## NA Handling
-For Challenge 2, whenever NA is simulated in $Y_t$ due to large $\lambda$ in $rpois$, we disgard it together with corresponding $X_t$.
+For Challenge 2, whenever NA was simulated in $Y_t$ due to large $\lambda$ in `rpois`, we discarded it together with corresponding $X_t$.
 
 ## Simulation for Challenge 1
-The goal here is to investigate on how the value of $(\beta_0, \beta_1)$ could affect the accuracy of inference under the OU model. We setup a experiment with true parameters being $\mu=10$, $\tau=1$ and $\gamma \in \{0.1,1,10\}$. In order to evaluate the accuracy of inference, we simulate 100 dataset for each pair of $(\beta_0, \beta_1)$ and calculated the root mean-squared error(RMSE) of $t_{dec}$, $\mu$ and $\tau$ as measure of accuracy. We first find a initial pair of $(\beta_0, \beta_1)$ such that the RMSE reasonably good. We looked into the simulated dataset when $\gamma=1$, shown below. We observed that the values of $X_n$ are mostly below $13$ and hence set a initial $\beta_1=1$ and $\beta_0>13$ such that we have $\beta_0-\beta_1 X_n > 0$ and $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1X_n))$ are more likely to have a large set of values. For $\gamma=1$, we decided to simulate $299$ observations per dataset. For $\gamma=0.1$, since we were not able to get good RMSE with $299$ observations per dataset, we increased to $999$ per dataset. We then perform inference simulations with one of the the $\beta$($\beta_0$ or $\beta_1$) fixed and the other gradually decreasing and observe how RMSE changes.
+The goal here is to investigate on how the value of $(\beta_0, \beta_1)$ could affect the accuracy of inference under the OU model. We set up a experiment with true parameters being $\mu=10$, $\tau=1$ and $\gamma \in \{0.1,1,10\}$. In order to evaluate the accuracy of inference, we simulated 100 dataset for each pair of $(\beta_0, \beta_1)$ and calculated the root mean-squared error(RMSE) of $t_{dec}$, $\mu$ and $\tau$ as measure of accuracy. We first found a initial pair of $(\beta_0, \beta_1)$ such that the RMSE looked reasonably small. We looked into the simulated dataset when $\gamma=1$, shown below. We observed that the values of $X_n$ are mostly below $13$ and hence set a initial $\beta_1=1$ and $\beta_0>13$ such that we have $\beta_0-\beta_1 X_n > 0$ and $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1X_n))$ are more likely to have a large set of values. For $\gamma=1$, we decided to simulate $299$ observations per dataset. For $\gamma=0.1$, since we were not able to get good RMSE with $299$ observations per dataset, we increased to $999$ per dataset. We then performed inference simulations with one of the  $\beta$s ($\beta_0$ or $\beta_1$) fixed and the other gradually decreasing and observe how RMSE changes.
 ```{r}
 n_obs = 999
 X <- ou_sim(gamma=1, mu=10, sigma=sqrt(2), dt=1, n_obs=999)
@@ -89,8 +89,8 @@ plot(1:n_obs, X, main="Xt under OU process")
 ```
 
 ## Simulation for Challenge 2
-To start, we simulate from OU process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1, \gamma, \mu$. 200 $X_t's$ and $Y_t's$ without NA are generated in each experiment, and paramter inferences are performed. Parameter inferences are performed using "Nelder-Mead" optmization. Similary, we simulate from BM process. We perform the experiment 20 times for a fixed set of $\beta_0, \beta_1$. 400 $X_t's$ and $Y_t's$ without NA are generated in each experiment. Parameter inferences are performed using "BFGS" optimzation. Our setups are as follows:
-OU setup, optimization method is "Nelder Mead", number of observation is 100.
+To start, we simulated from OU process. We performed the experiment 20 times for a fixed set of $\beta_0, \beta_1, \gamma, \mu$. 200 $X_t's$ and $Y_t's$ without NAs were generated in each experiment. Parameter inferences were performed using "Nelder-Mead" optmization. Similary, we simulated from BM process. We performed the experiment 20 times for a fixed set of $\beta_0, \beta_1$. 400 $X_t's$ and $Y_t's$ without NAs were generated in each experiment. Parameter inferences were performed using "BFGS" optimzation. Our setups are as follows:
+In OU setup, optimization method is "Nelder Mead", number of observation is 100.
 \begin{itemize}
 \item setup 1: $\beta_0=10, \beta_1=0.5, \tau=1, \mu=0$
 \item setup 2: $\beta_0=5, \beta_1=0.5, \tau=2, \mu=0$
@@ -98,7 +98,7 @@ OU setup, optimization method is "Nelder Mead", number of observation is 100.
 \item setup 4: $\beta_0=10, \beta_1=0.5, \tau=2, \mu=1$
 \end{itemize}
 
-And BM setup, optimization method is "BFGS, number of observation is 400.
+In BM setup, optimization method is "BFGS, number of observation is 400.
 \begin{itemize}
 \item setup 1: $\beta_0=10, \beta_1=0.5, \mu=0, \gamma=5$
 \item setup 2: $\beta_0=5, \beta_1=0.5, \mu=0, \gamma=5$
@@ -106,7 +106,6 @@ And BM setup, optimization method is "BFGS, number of observation is 400.
 \end{itemize}
 
 # Results
-We present and analyze our results with respect to two challenges as follows.
 
 ## Challenge 1
 The result of our simulations are as follows:
@@ -127,7 +126,7 @@ signif(sim1_result[sim1_result[,"gamma"]==1, show_col], 3)
 
 ### gamma=0.1
 
-The simulation result with $\gamma=1$ is shown below. In this setup, we were able to get $\text{RMSE}_\theta<5\%$ and $\text{RMSE}_\tau<10\%$ but $\text{RMSE}_t<20\%$ only. Thee result shows that our model were not able to achieve good accuracy when there are only $299$ observations in the dataset. However, with the number of observations being $999$, the model were able to get much better $RMSE$. In this setup, the minimum value of $\beta_0$ for good accuracy is between $9$ and $11$ when $\beta_1=1$, and the minimum value of $\beta_1$ for good accuracy is between $0.9$ and $1$.
+The simulation result with $\gamma=1$ is shown below. In this setup, we were able to get $\text{RMSE}_\theta<5\%$ and $\text{RMSE}_\tau<10\%$ but $\text{RMSE}_t<20\%$ only. The result shows that our model were not able to achieve good accuracy when there are only $299$ observations in the dataset. However, with the number of observations being $999$, the model were able to get much better $RMSE$. In this setup, the minimum value of $\beta_0$ for good accuracy is between $9$ and $11$ when $\beta_1=1$, and the minimum value of $\beta_1$ for good accuracy is between $0.9$ and $1$.
 ```{r}
 signif(sim1_result[sim1_result[,"gamma"]==0.1, show_col], 3) 
 ```
@@ -140,13 +139,13 @@ signif(sim1_result[sim1_result[,"gamma"]==10, show_col], 3)
 
 
 ## Challenge 2
-For $X_t$ simulated from OU model, as shown below, for 4 setups, the probablities to pick OU model by AIC increase as $\gamma$'s go up from 0.01 to 4.
+For $X_t$ simulated from OU model, as shown below, for 4 setups, the probablities to pick OU model by AIC increase as $\gamma$'s go from 0.01 to 4.
 ```{r}
 sim2_OU_result <- read.csv("sim2_table1.csv", check.names=FALSE)
 print(sim2_OU_result,row.names = FALSE)
 ```
  
-For $X_t$ simulated from BM model, as shown below, for 4 setups, the probablities to pick BM model by AIC increase as $\sigma$'s go up from 1e-6 to 2. However, when $\sigma = 3$, the probabilities goes down.
+For $X_t$ simulated from BM model, as shown below, for 4 setups, the probablities to pick BM model by AIC increase as $\sigma$'s go from 1e-6 to 2. However, when $\sigma = 3$, the probabilities goes down.
 ```{r}
 sim2_BM_result <- read.csv("sim2_table2.csv", check.names=FALSE)
 print(sim2_BM_result,row.names = FALSE)
@@ -154,12 +153,49 @@ print(sim2_BM_result,row.names = FALSE)
 
 # Discussion
 
+## Challenge 1
+
+### Lower Bounds of beta0
+Under $\mu=10, \tau=1$, we simulated 1000 datasets and found the mean and range of the simulated $X_n$ datasets as below:
+```{r}
+sapply(c(0.1,1,10), function(gamma) {
+  ou_X <- ou_sim(gamma=gamma, mu=10, sigma=sqrt(2*gamma), dt=1, n_obs=999)
+  c(gamma=gamma, min=min(ou_X), mean=mean(ou_X), max=max(ou_X))
+  })
+```
+With $\beta_1=1$, when $\beta_0$ drops under $13$, $\beta_0 - \beta_1 X_n$ has a probability of becoming negative. As $\beta_0$ continues to decrease, the probability to become negative increases. When $\beta_0 - \beta_1 X_n$ is negative and $\exp(\beta_0 - \beta_1 X_n)<1$, the $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1 X_n))$ generate only few values, with large probability being either $0$ or $1$. This means that the characteristics of $X_n$ datasets are not reflected to $Y_n$ and inference on $X_n$ parameters using $Y_n$ data will perform poorly.
+
+### Lower Bounds of beta1
+To understand why the value of $\beta_1$ affects inference result, we simulated $100$ $X_n$ and $Y_n$ datasets of size $299$ and computed their corresponding $p(Y|X)$.
+```{r}
+vec_beta1 <- seq(0.1,1,by=0.1)
+loglik <- sapply(vec_beta1, function(beta1) {
+  beta0 <- 15
+  X <- ou_sim(gamma=1, mu=10, sigma=sqrt(2), dt=1, n_obs=299)
+  Y <- y_sim(X, beta0=beta0, beta1=beta1)
+  sum(dpois(Y,exp(beta0-beta1*X), log=TRUE))
+})
+rbind(beta1=vec_beta1, loglik=loglik)
+```
+This shows that under the same parameter and $\beta_0$, different $\beta_1$s can have different loglikelihood. From this observation, we further investigated into $l(\theta|X,Y) = log\{p(Y|X) \times p(X|\theta)\}$ and found that changes in $\beta_1$ affect the term $\sum_{n=0}^N Y_n (\beta_0-\beta_1 X_n)=\sum_{n=0}^N Y_n\beta_0 - \beta_1X_nY_n$. Specifically, if we consider $\beta_1$ as a weight for the term $X_nY_n$, then decreasing $\beta$ is reducing the impact of the term $X_nY_n$ on $l(\theta|X,Y)$. We noticed that this is the only term $Y_n$-related term in finding $\hat{X_\theta}$ in Laplace approximation. Therefore, in finding $hat{X_\theta}$, decreasing $\beta_1$ acts as decreasing the importance of the value of $Y_n$. We suspect that this is the reason why $\beta_1$ has a lower bound. However, even if this is the case, it is difficult to determine what the lower bound is without performing simulation. 
+
+### The impact of `n_obs` on RMSE
+When $\gamma=0.1$, equation 2 is aprroximatly $X_{t+\Delta t} | X_t \sim N(0.1\mu+0.9X_t, 0.2\tau)$, which means that the value of $X_t$ has played an important factor in the likelihood of $X_{t+\Delta t}$. Since $X_t$s are not given and only approximated using laplace, inferences would depend more on Laplace approximation. Since $X_t$s are approximated using MLE, and MLE methods are generally affected by the number of observations, we suspect that the performance of Laplace approximation in this model would also depend on the dataset size. 
+
+## Challenge 2
+### OU Simulation
+For experiments simulated from the OU model, we can see a consistent improvement in picking the correct model when $\gamma$ goes up. As $\gamma\rightarrow 0$, $\omega_{\Delta{t}}\rightarrow 1$, and $\tau$ is still a constant, equation \ref{eq:4} becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$, which is in the same form as equation \ref{eq:2}. Thus, it is difficult to distinguish the OU simulation from the BM model. As $\gamma$ goes up, $\omega_{\Delta{t}}\rightarrow 0$, equation \ref{eq:2} and equation \ref{eq:4} differ in means and variances, and the two models become easier to be distinguished.
+
+### BM Simulation
+For experiments simulated from the BM model, we can see a consistent improvement in picking the correct model when $\sigma_{BM}$ goes up, however, the improvement stops at $\sigma_{BM}=3$ for most experiments. We analyzed in the following two aspects. First of all, when $\sigma_{BM} \rightarrow 0$, equation \ref{eq:2} becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. From the discussion in the previous paragraph, when $\gamma \rightarrow 0$, equation \ref{eq:4} also becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. Thus, if parameter inferences are done correctly, we can also find OU parameters that fit the data well. It will be difficult to identify between the BM simulated data and the OU simulated data. Furthermore, when $\sigma$ becomes too large, for the given $\beta_0$ and $\beta_1$, for example, $\sigma=3, \beta_0=5$ and $\beta_1=1$, the probability of generating large $X_t$ becomes higher. In this case, $exp(\beta_0 -\beta_1 X_t)$ becomes close to 0, and the generated $Y_t$'s from Poisson equation \ref{eq:1} are more likely to be 0s. Consequently, $Y_t$ does not provide enough information to the underlying generating process, and hence difficult to distinguish the BM model from the OU model.
+
+Another observation to note is that as a general rule, $|\beta_0-\beta_1 X_t|$ cannot be too large; otherwise, many NAs from equation \ref{eq:1} will be generated because R cannot handle values $> e^{22}$. Referring to how we handle NAs in the Methodology section, repeatedly generating values until no NAs results will result in huge computation cost.
+
 ## Other Potential Models for Molecular Dynamics Study
 
 ### Morse Interaction Model
 
-Morse Interaction model[@schelstraete1999energy] is described as a combination of BM and improved OU process.
-Under this model, $X_{t}$ is a Markov process satisfying the stochastic differential equation (SDE):
+Under the Morse Interaction model[@schelstraete1999energy], $X_{t}$ is a Markov process satisfying the stochastic differential equation:
 $$
 dX_{t}=-U'(X_{t})dt+\sigma dB_{t}
 $$
@@ -171,7 +207,8 @@ $$
 The distance $X_{t}$ is set to be strictly positive, $X_{t}$ > 0. When $X_{t}$ is too large, repulsive forces allow bond breaking to occur - the molecules again resemble BM. 
 When the donor and acceptor again get close to each other, the bond is reformed and exchange of photons takes place. The dynamics then resembles OU process.
 
-Morse interaction model is a comprehensive approach towards dynamics study of molecular interaction. 
+Morse interaction model is a comprehensive approach towards dynamics study of molecular interaction. Since this model is described as a combination of the BM model and improved OU process, it will be valuable to add this model into our implementation.
+
 
   
 ### Lennard-Jones Potential
@@ -188,59 +225,18 @@ Apart from being a widely used model itself, Lennard-Jones potential also someti
 
 However, Lennard-Jones potential is not designated to model donor-acceptor interactions.
 
-
-## Challenge 1
-
-### Lower Bounds of beta0
-Under $\mu=10, \tau=1$, we simulated 1000 datasets and find the mean and range of the simulated $X_n$ datasets as below:
-```{r}
-sapply(c(0.1,1,10), function(gamma) {
-  ou_X <- ou_sim(gamma=gamma, mu=10, sigma=sqrt(2*gamma), dt=1, n_obs=999)
-  c(gamma=gamma, min=min(ou_X), mean=mean(ou_X), max=max(ou_X))
-  })
-```
-With $\beta_1=1$, when $\beta_0$ drops under $13$, $\beta_0 - \beta_1 X_n$ has a probability of becoming negative. As $\beta_0$ continue to decrease, the probability to become negative increases. When $\beta_0 - \beta_1 X_n$ is negative and $\exp(\beta_0 - \beta_1 X_n)<1$, the $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1 X_n))$ generate only few values, with large probability being either $0$ or $1$. This means that the characteristics of $X_n$ datasets are not reflected to $Y_n$ and inference on $X_n$ parameters using $Y_n$ data will perform poorly.
-
-### Lower Bounds of beta1
-To understand why the value of $\beta_1$ affect inference result, we simulated $100$ $X_n$ and $Y_n$ datasets of size $299$ and computed their corresponding $p(Y|X)$.
-```{r}
-vec_beta1 <- seq(0.1,1,by=0.1)
-loglik <- sapply(vec_beta1, function(beta1) {
-  beta0 <- 15
-  X <- ou_sim(gamma=1, mu=10, sigma=sqrt(2), dt=1, n_obs=299)
-  Y <- y_sim(X, beta0=beta0, beta1=beta1)
-  sum(dpois(Y,exp(beta0-beta1*X), log=TRUE))
-})
-rbind(beta1=vec_beta1, loglik=loglik)
-```
-This shows that under the same parameter and $\beta_0$, different $\beta_1$ can have different loglikelihood. From this observation, we further investigated into $l(\theta|X,Y) = log\{p(Y|X) \times p(X|\theta)\}$ and found that changes in $\beta_1$ affect the term $\sum_{n=0}^N Y_n (\beta_0-\beta_1 X_n)=\sum_{n=0}^N Y_n\beta_0 - \beta_1X_nY_n$. Specifically, if we consider $\beta_1$ as a weight for the term $X_nY_n$, then decreasing $\beta$ is reducing the impact of the term $X_nY_n$ on $l(\theta|X,Y)$. We notice that this is the only term $Y_n$-related term in finding $\hat{X_\theta}$ in laplace approximation. Therefore, in finding $hat{X_\theta}$, decreasing $\beta_1$ acts as decreasing the importance of the value of $Y_n$. We suspect that this is the reason why $\beta_1$ has a lower bound. However, even if this is the case, it is difficult to determine what the lower bound is without performing simulation. 
-
-### Why `n_obs` has Impact on RMSE when gamma=0.1
-When $\gamma=0.1$, equation 2 is aprroximatly $X_{t+\Delta t} | X_t \sim N(0.1\mu+0.9X_t, 0.2\tau)$, which means that the value of $X_t$ has plays important factor in the likelihood of $X_{t+\Delta t}$. Since $X_t$ are not given and only approximated using laplace, inference would depend more on Laplace approximation. Since $X_t$ are approximated using MLE and MLE methods are generally affected number of observations, we suspect that the performance of Laplace approximation in this model would also depend on dataset size. 
-
-## Challenge 2
-### OU Simulation
-For experiments simulated from OU, we can see a consistent improvement in picking the correct model when $\gamma$ goes up. As $\gamma\rightarrow 0$, $\omega_{\Delta{t}}\rightarrow 1$ and $\tau$ is still a constant, equation \ref{eq:4} becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$, which is in the same form as equation \ref{eq:2}. Thus, it is difficult to distinguish the OU simulation from the BM model. As $\gamma$ goes up, $\omega_{\Delta{t}}\rightarrow 0$, \ref{eq:2} and \ref{eq:4} differ in mean and variance, and hence become easier to distinguish.
-
-### BM Simulation
-For experiments simulated from BM, we can see a consistent improvement in picking the correct model when $\sigma_{BM}$ goes up, however, the improvement stops at $\sigma_{BM}=3$ for most of the experiments. We analyze in the following two aspects. First of all, when $\sigma_{BM} \rightarrow 0$, equation \ref{eq:2} becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. From the discussion in the previous paragraph, when $\gamma \rightarrow 0$, equation \ref{eq:4} also becomes $X_{t+\Delta{t}}|X_t \sim N(X_t, 0)$. Thus, if we do parameter inferences are done correctly, we can also find OU parameters that fit the data well. It will be difficult to tell the BM simulated data from OU models. Furthermore, when $\sigma$ becomes too large with respect to $\beta_0$ and $\beta_1$, for example, when $\sigma=3$ with respect to $\beta_0=5$ and $\beta_1=1$, the probability of generating large $X_t$ becomes higher. In this case, $exp(\beta_0 -\beta_1 X_t)$ becomes close to 0, and the generated $Y_t$'s from Poission equation \ref{eq:1} are more likely to be 0's. Consequently, $Y_t$ does not provide enough information to the underlying generating process, and hence difficult to tell apart BM model from OU model.
-
-Another observation to note is that as a general rule, $|\beta_0-\beta_1|$ cannot be too large; otherwise, many NAs from equation \ref{eq:1} will be generated because R cannot handle values $> e^{22}$. Referring to how we handle NAs in the Methodology section, repetively generating values until no NAs results will result in huge computation cost.
-
 ## Potential Improvements in Implementation
 ### Other Model Selection Criterion 
-Only AIC is used in model selection for Challenge 2. We can consider other model selection criteria for Challenge 2. For example, AIC and Mallow CP. Using a weighted of different criteria for model selection makes the result less biased. 
+Only AIC was used in model selection for Challenge 2. We can also consider other model selection criteria for Challenge 2. For example, AIC and Mallow CP. Using a weighted criteria for model selection might make the result less biased. 
 
 ### Random Start for BM model
-As discussed in the methodology section, random. We figured out how to implement random start for OU model by reparameterization. Consequently, the accuracies of OU inferences have been improved sigfinicantly. It will be useful to figure out similar approaches for BM model.
+As discussed in the Methodology section, random. We figured out how to implement random start for OU model by reparameterization. As a consequence, the accuracies of the OU inferences have been improved sigfinicantly. It would be useful to figure out similar approaches for BM model.
 
-### R Drawback
-One of the challenges encountered in the project is the efficiency of running simulation results. Each simulation with different parameters took over 1 hour to obtain the final results. This exposes one of the disadvantages of R, which is that R does not support running test cases in parallel. 
 
 \newpage
 # Appendix
 
-1. csv for multistart in Methodology
+1. csv for multistart in the Methodology
 ```{r}
 multistart_result <-read.csv("multi_start_result.csv")
 multistart_result
