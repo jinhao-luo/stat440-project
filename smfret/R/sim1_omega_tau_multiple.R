@@ -1,7 +1,7 @@
 require("TMB")
 require(NMOF)
 source("R/smfret-functions.R")
-gr_mod <- "src/TMB/smfret_TMBExports"
+gr_mod <- "src/smfret_TMBExports"
 dyn.load(dynlib(gr_mod))
 
 

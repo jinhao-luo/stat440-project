@@ -5,7 +5,7 @@ source("R/smfret-functions.R")
 source("R/multi_start.R")
 
 # Compile and load the model.
-gr_mod <- gr_mod <- "src/TMB/smfret_TMBExports"
+gr_mod <- gr_mod <- "src/smfret_TMBExports"
 dyn.load(dynlib(gr_mod))
 
 bm_param_num <- 1
