@@ -16,6 +16,7 @@
 #' X_s+t | X_s ~ N( rho_t * (X_s - mu) + mu, tau^2 * (1-rho_t^2) ),
 #' ```
 #' where `rho_t = exp(-gamma * t)` and `tau^2 = sigma^2/(2*gamma)`.  Its stationary distribution is `X_t ~ N(mu, tau^2)`.
+#' @export
 ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0=mu) {
   tau <- sigma/sqrt(2*gamma) # stationary standard deviation
   if(missing(x0)) x0 <- rnorm(1, mean = mu, sd = tau)
@@ -39,6 +40,7 @@ ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0=mu) {
 #' @return The scalar value of the loglikelihood `loglik(gamma, mu, sigma | Xt)`.
 #'
 #' @details For simplicity, the loglikelihood contribution of the first observation is ignored.
+#' @export
 ou_nll <- function(gamma, mu, sigma, Xt, dt) {
   tau <- sigma/sqrt(2*gamma) # stationary standard deviation
   lrho <- -gamma * dt
@@ -61,6 +63,7 @@ ou_nll <- function(gamma, mu, sigma, Xt, dt) {
 #' @param dt Interobservation time.
 #' @return The scalar value of the loglikelihood `loglik(gamma, mu, sigma | Xt, Yt)`.
 #'
+#' @export
 ou_y_nll <- function(gamma, mu, sigma, b0, b1, Xt, Yt, dt) {
   ou_nll(gamma, mu, sigma, Xt, dt)-sum(dpois(Yt, exp(b0-b1*Xt), log=TRUE))
   # ou_nll(gamma, mu, sigma, Xt, dt)-sum(Yt*(b0-b1*Xt)-exp(b0-b1*Xt))
@@ -79,6 +82,7 @@ ou_y_nll <- function(gamma, mu, sigma, b0, b1, Xt, Yt, dt) {
 #' ```
 #' X_s+t | X_s ~ N(X_s + mu * t, sigma^2 * t).
 #' ```
+#' @export
 bm_sim <- function(mu, sigma, dt, n_obs, x0 = 0) {
   # Brownian increments
   dX <- rnorm(n_obs, mean = mu * dt, sd = sigma * sqrt(dt))
@@ -94,6 +98,7 @@ bm_sim <- function(mu, sigma, dt, n_obs, x0 = 0) {
 #' @return The scalar value of the loglikelihood `loglik(gamma, mu, sigma | Xt)`.
 #'
 #' @details For simplicity, the loglikelihood contribution of the first observation is ignored.
+#' @export
 bm_nll <- function(mu, sigma, Xt, dt) {
   n <- length(Xt)
   -sum(dnorm(Xt[2:n], log = TRUE,mean = Xt[1:(n-1)], sd = sigma*sqrt(dt)))
@@ -110,6 +115,7 @@ bm_nll <- function(mu, sigma, Xt, dt) {
 #' @param dt Interobservation time.
 #' @return The scalar value of the loglikelihood `loglik(gamma, mu, sigma | Xt, Yt)`.
 #'
+#' @export
 bm_y_nll <- function(mu, sigma, b0, b1, Xt, Yt, dt) {
   bm_nll(mu, sigma, Xt, dt)-sum(dpois(Yt, exp(b0-b1*Xt), log=TRUE))
   # ou_nll(gamma, mu, sigma, Xt, dt)-sum(Yt*(b0-b1*Xt)-exp(b0-b1*Xt))
