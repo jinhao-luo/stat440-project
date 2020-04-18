@@ -37,11 +37,11 @@ By a simulation study, our contributions include:
 
 # Introduction
 ## Brownian Motion  
-BM is widely used to model the donor-acceptor distance during free diffusion in the molecular environment.The random flow of molecular motion is subtained by collision of moving molecules. In our dynamical analysis, $X_{t}$ is denoted as the donar-acceptor distance at time t. It is a Gaussian Markov process with the following transition density:
+BM is widely used to model the donor-acceptor distance during free diffusion in the molecular environment.The random flow of molecular motion is subtained by the collision of moving molecules. In our dynamical analysis, $X_{t}$ is denoted as the donar-acceptor distance at time t. It is a Gaussian Markov process with the following transition density:
 
 \begin{equation} \label{eq:2} X_{t+\Delta t}|X_{t} \sim N(X_{t}, \sigma^2 \Delta t) \end{equation}  
 
-Every subsequent variation in distance by an increment of $\Delta t$ has a mean-reverting nature. That is, the donor-acceptor distance in the next instance revolves around the mean of the process in various direction. In BM model, the mean is set as the current-time donor-aceptor distance. With the process involving Markov element, the sequence of possible molecular motions is only current-state dependent, and it is often refered to as memoryless. The collection of the independent processes at each instance $\Delta t$, are recognised as jointly Gaussian (normal).  
+The donor-acceptor distance in the next instance revolves around the mean of the process in various direction. This property allows that the distance will eventually revert to the long-run average. In the BM model, the mean is set as the current-time donor-aceptor distance. With the process involving Markov element, the sequence of possible molecular motions is only current-state dependent, and it is often refered to as memoryless. The collection of the independent processes at each instance $\Delta t$, are recognised as jointly Gaussian (normal).  
 
 The variation is determined by the diffussion rate $\sigma$, multiplied by $\Delta t$. The diffussion rate is set constant in our study, which implies the thermal temperature and pressure are kept unchanged and no external force is applied into the system.  
 
@@ -55,7 +55,7 @@ Where $W_t$ is a standard BM on $t \in (0, \infty),\gamma > 0, \sigma > 0$
 $X_t$ is a stationary Gaussian Markov process with transition density: 
 \begin{equation} \label{eq:4} X_{t+\Delta t}|X_{t} \sim N(\mu + \omega_{\Delta t} (X_{t} - \mu), \tau^2(1- \omega_{\Delta t}^2)) \end{equation} 
 where $\omega_{\Delta t} = exp(-\gamma \Delta t)$ and $\tau^2 = \sigma^2/(2 \gamma)$.
-Compared to BM model, the OU process includes more factors from the environment that can impact the change of the distance. The OU process has four components to describe the molecule interactions which are $\gamma$, $\mu$, $\sigma$, and $dW_t$.The interpretation of $\gamma$ is the rate of mean reversion. The OU process shares mean reversion nature with BM. This property allows that the distance will eventually revert to the long-run average.The rate indicates how strong the distance will react toward the attractor. $\mu$ is the asymptotic mean of "bond" length. $\sigma$ is the parameter showing the volatility of noise[@oubio16]. The OU process represents how molecule move towards the attractors $\mu$ with BM. 
+Compared to BM model, the OU process includes more factors from the environment that can impact the change of the distance. The OU process has four components to describe the molecule interactions: $\gamma$, $\mu$, $\sigma$, and $dW_t$.The interpretation of $\gamma$ is the rate of mean reversion. The OU process sharesthe  mean reversion nature with the BM. The rate indicates how strong the distance will react toward the attractor. $\mu$ is the asymptotic mean of "bond" length. $\sigma$ is the parameter showing the volatility of noise[@oubio16]. The OU process represents how molecule move towards the attractors $\mu$ with BM. 
 
 The OU process considers the current state and the speed of molecule interaction, which is preferred when modeling the many-body interactions.Since with different type of donor-acceptor interactions, the molecule will react differently. 
 One of the downsides of OU process is that a very small amount of variation such as measurement error can profoundly affect the performance of the model. Also the distance is always positive. However, the donor acceptor in OU allows negative distance. 
