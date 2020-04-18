@@ -19,7 +19,7 @@ Fluorescence resonance energy transfer (FRET) has been used to study biological 
 Y_n \stackrel{ind}{\sim} Poisson(exp(\beta_0+\beta_1 X_t))
 \end{equation} 
 
-where $X_t$  is the true donor-acceptor distance modelled by BM and OU process.
+where $X_t$ is the true donor-acceptor distance modeled by the BM and OU process.
 
 The challenges of this problem are the following:
 \begin{itemize}
@@ -29,9 +29,9 @@ The challenges of this problem are the following:
 
 By a simulation study, our contributions include:
 \begin{itemize}
-\item Implemented parameter inferences for BM and OU models and tested likelihoods and estimates by unit tests
+\item Implemented parameter inferences for the BM model and the OU models and tested likelihoods and estimates by unit tests
 \item Found a set of $\beta$s to accurately estimate OU parameters and explained how $\beta$s affect OU parameter estimation
-\item Found a threshold to distinguish BM simulated data from OU model, vice versa, and explained why the thresholds are reasonable mathematically
+\item Found a threshold to distinguish BM simulated data from the OU model, vice versa, and explained why the thresholds are reasonable mathematically
 \item Enabled random start in optimization algorithms
 \end{itemize}
 
@@ -45,20 +45,20 @@ The donor-acceptor distance in the next instance revolves around the mean of the
 
 The variation is determined by the diffussion rate $\sigma$, multiplied by $\Delta t$. The diffussion rate is set constant in our study, which implies the thermal temperature and pressure are kept unchanged and no external force is applied into the system.  
 
-However, the many-body interactions that yield the random pattern cannot be solved by BM model that accounts every involved molecule. Therefore, BM itself is not capable to model the full motion of molecules especially during the photon exchange between donor and acceptor. This is ultimately a downside of BM model in our dynamical analysis. 
+However, the many-body interactions that yield the random pattern cannot be solved by BM model that accounts every involved molecule. Therefore, the BM itself is not capable to model the full motion of molecules especially during the photon exchange between donor and acceptor. This is ultimately a downside of BM model in our dynamical analysis. 
 
 ### Ornstein-Uhlenbeck Process 
-Ornstein-Uhlenbeck process is further developed from BM by L. S. Ornstein and G. E. Uhlenbeck[@theorybm93].
+The Ornstein-Uhlenbeck process is further developed from BM by L. S. Ornstein and G. E. Uhlenbeck[@theorybm93].
 The OU process is a stochastic Gaussian process with continuous paths. The OU process is defined as the following stochastic differential equation: 
 \begin{equation} \label{eq:3} dX_t = \gamma (\mu - X_t) dt + \sigma dW_t \end{equation} 
 Where $W_t$ is a standard BM on $t \in (0, \infty),\gamma > 0, \sigma > 0$
 $X_t$ is a stationary Gaussian Markov process with transition density: 
 \begin{equation} \label{eq:4} X_{t+\Delta t}|X_{t} \sim N(\mu + \omega_{\Delta t} (X_{t} - \mu), \tau^2(1- \omega_{\Delta t}^2)) \end{equation} 
 where $\omega_{\Delta t} = exp(-\gamma \Delta t)$ and $\tau^2 = \sigma^2/(2 \gamma)$.
-Compared to BM model, the OU process includes more factors from the environment that can impact the change of the distance. The OU process has four components to describe the molecule interactions: $\gamma$, $\mu$, $\sigma$, and $dW_t$.The interpretation of $\gamma$ is the rate of mean reversion. The OU process sharesthe  mean reversion nature with the BM. The rate indicates how strong the distance will react toward the attractor. $\mu$ is the asymptotic mean of "bond" length. $\sigma$ is the parameter showing the volatility of noise[@oubio16]. The OU process represents how molecule move towards the attractors $\mu$ with BM. 
+Compared to the BM model, the OU process includes more factors from the environment that can impact the change of the distance. The OU process has four components to describe the molecule interactions: $\gamma$, $\mu$, $\sigma$, and $dW_t$.The interpretation of $\gamma$ is the rate of mean reversion. The OU process shares the mean reversion nature with the BM. The rate indicates how strong the distance will react toward the attractor. $\mu$ is the asymptotic mean of "bond" length. $\sigma$ is the parameter showing the volatility of noise[@oubio16]. The OU process represents how molecule move towards the attractors $\mu$ with the BM model. 
 
 The OU process considers the current state and the speed of molecule interaction, which is preferred when modeling the many-body interactions.Since with different type of donor-acceptor interactions, the molecule will react differently. 
-One of the downsides of OU process is that a very small amount of variation such as measurement error can profoundly affect the performance of the model. Also the distance is always positive. However, the donor acceptor in OU allows negative distance. 
+One of the downsides of the OU process is that a very small amount of variation such as measurement error can profoundly affect the performance of the model. Also the distance is always positive. However, the donor acceptor in OU allows negative distance. 
 
 # Methodology
 
@@ -82,8 +82,9 @@ For Challenge 2, whenever NA was simulated in $Y_t$ due to large $\lambda$ in `r
 
 ## Simulation for Challenge 1
 The goal here is to investigate on how the value of $(\beta_0, \beta_1)$ could affect the accuracy of inference under the OU model. We set up a experiment with true parameters being $\mu=10$, $\tau=1$ and $\gamma \in \{0.1,1,10\}$. In order to evaluate the accuracy of inference, we simulated 100 dataset for each pair of $(\beta_0, \beta_1)$ and calculated the root mean-squared error(RMSE) of $t_{dec}$, $\mu$ and $\tau$ as measure of accuracy. We first found a initial pair of $(\beta_0, \beta_1)$ such that the RMSE looked reasonably small. We looked into the simulated dataset when $\gamma=1$, shown below. We observed that the values of $X_n$ are mostly below $13$ and hence set a initial $\beta_1=1$ and $\beta_0>13$ such that we have $\beta_0-\beta_1 X_n > 0$ and $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1X_n))$ are more likely to have a large set of values. For $\gamma=1$, we decided to simulate $299$ observations per dataset. For $\gamma=0.1$, since we were not able to get good RMSE with $299$ observations per dataset, we increased to $999$ per dataset. We then performed inference simulations with one of the  $\beta$s ($\beta_0$ or $\beta_1$) fixed and the other gradually decreasing and observe how RMSE changes.
+
 ```{r}
-n_obs = 999
+n_obs <- 999
 X <- ou_sim(gamma=1, mu=10, sigma=sqrt(2), dt=1, n_obs=999)
 plot(1:n_obs, X, main="Xt under OU process")
 ```
