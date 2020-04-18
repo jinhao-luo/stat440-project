@@ -10,7 +10,9 @@ link-citations: true
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(smfret)
 ```
+
 # Abstract
 Fluorescence resonance energy transfer (FRET) has been used to study biological structures and monitor the activities of molecules [@lemke2016forster]. However, some conformational changes are difficult to detect using ensemble FRET. In order to understand the interaction at single molecule level, single-molecule fluorescence resonance energy transfer (smFRET) is developed to probe the detailed kinetics of structure changes within a single molecule [@ha2001single]. By using this revolutionized technique, scientists unlock the opportunities to research more about protein folding-unfolding, protein conformation dynamics, ion channel dynamics, receptor-ligand interactions, nucleic acid structure and conformation, vesicle fusion, and force induced conformational changes [@sasmal2016single]. All the new discoveries would reveal the mechanism of diseases at the cellular level [@ideker2008protein]. Current smFRET research employs Brownian Motion (BM) in modelling free diffusion state [@wallace2017forster] and Ornstein-Uhlenbeck (OU) process to model the bonding state where there is a consistent bond with stochastic perturbations between donor and acceptor [@yang2002single]. One of the remaining challenges of smFRET modelling is whether it is possible to differentiate between free diffusion and bound donor-acceptor pairs. Another challenge is whether we can detect binding and unbinding events. To do so, a simplified experiment set up as follows. The number of photons at time follows a distribution: 
 \begin{equation} \label{eq:1} 
@@ -80,21 +82,7 @@ For Challenge 2, whenever NA is simulated in $Y_t$ due to large $\lambda$ in $rp
 
 ## Simulation for Challenge 1
 The goal here is to investigate on how the value of $(\beta_0, \beta_1)$ could affect the accuracy of inference under the OU model. We setup a experiment with true parameters being $\mu=10$, $\tau=1$ and $\gamma \in \{0.1,1,10\}$. In order to evaluate the accuracy of inference, we simulate 100 dataset for each pair of $(\beta_0, \beta_1)$ and calculated the root mean-squared error(RMSE) of $t_{dec}$, $\mu$ and $\tau$ as measure of accuracy. We first find a initial pair of $(\beta_0, \beta_1)$ such that the RMSE reasonably good. We looked into the simulated dataset when $\gamma=1$, shown below. We observed that the values of $X_n$ are mostly below $13$ and hence set a initial $\beta_1=1$ and $\beta_0>13$ such that we have $\beta_0-\beta_1 X_n > 0$ and $Y_n \sim \text{Poisson}(\exp(\beta_0-\beta_1X_n))$ are more likely to have a large set of values. For $\gamma=1$, we decided to simulate $299$ observations per dataset. For $\gamma=0.1$, since we were not able to get good RMSE with $299$ observations per dataset, we increased to $999$ per dataset. We then perform inference simulations with one of the the $\beta$($\beta_0$ or $\beta_1$) fixed and the other gradually decreasing and observe how RMSE changes.
-```{r, echo=FALSE}
-# TODO: use library
-ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0=mu) {
-  tau <- sigma/sqrt(2*gamma) # stationary standard deviation
-  if(missing(x0)) x0 <- rnorm(1, mean = mu, sd = tau)
-  # generate efficiently using a one-step linear filter
-  lrho <- -gamma * dt
-  ou_sd <- tau * sqrt((1-exp(2 * lrho))) # conditional sd
-  ou_filt <- exp(lrho) # filter coefficients
-  z <- rnorm(n_obs, sd = ou_sd) # pre-generate normal draws
-  Xt <- filter(x = z, filter = ou_filt,
-               method = "recursive", init = x0 - mu)
-  return(as.numeric(Xt + mu))
-}
-
+```{r}
 n_obs = 999
 X <- ou_sim(gamma=1, mu=10, sigma=sqrt(2), dt=1, n_obs=999)
 plot(1:n_obs, X, main="Xt under OU process")
@@ -205,21 +193,7 @@ However, Lennard-Jones potential is not designated to model donor-acceptor inter
 
 ### Lower Bounds of beta0
 Under $\mu=10, \tau=1$, we simulated 1000 datasets and find the mean and range of the simulated $X_n$ datasets as below:
-```{r, echo=FALSE}
-# TODO: use ou_sim from package
-ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0=mu) {
-  tau <- sigma/sqrt(2*gamma) # stationary standard deviation
-  if(missing(x0)) x0 <- rnorm(1, mean = mu, sd = tau)
-  # generate efficiently using a one-step linear filter
-  lrho <- -gamma * dt
-  ou_sd <- tau * sqrt((1-exp(2 * lrho))) # conditional sd
-  ou_filt <- exp(lrho) # filter coefficients
-  z <- rnorm(n_obs, sd = ou_sd) # pre-generate normal draws
-  Xt <- filter(x = z, filter = ou_filt,
-               method = "recursive", init = x0 - mu)
-  return(as.numeric(Xt + mu))
-}
-
+```{r}
 sapply(c(0.1,1,10), function(gamma) {
   ou_X <- ou_sim(gamma=gamma, mu=10, sigma=sqrt(2*gamma), dt=1, n_obs=999)
   c(gamma=gamma, min=min(ou_X), mean=mean(ou_X), max=max(ou_X))
@@ -229,24 +203,7 @@ With $\beta_1=1$, when $\beta_0$ drops under $13$, $\beta_0 - \beta_1 X_n$ has a
 
 ### Lower Bounds of beta1
 To understand why the value of $\beta_1$ affect inference result, we simulated $100$ $X_n$ and $Y_n$ datasets of size $299$ and computed their corresponding $p(Y|X)$.
-```{r, echo=FALSE}
-# TODO: use package
-y_sim <- function(X, beta0, beta1) {
-  sapply(X, function(x) rpois(1, exp(beta0-beta1*x)))
-}
-ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0=mu) {
-  tau <- sigma/sqrt(2*gamma) # stationary standard deviation
-  if(missing(x0)) x0 <- rnorm(1, mean = mu, sd = tau)
-  # generate efficiently using a one-step linear filter
-  lrho <- -gamma * dt
-  ou_sd <- tau * sqrt((1-exp(2 * lrho))) # conditional sd
-  ou_filt <- exp(lrho) # filter coefficients
-  z <- rnorm(n_obs, sd = ou_sd) # pre-generate normal draws
-  Xt <- filter(x = z, filter = ou_filt,
-               method = "recursive", init = x0 - mu)
-  return(as.numeric(Xt + mu))
-}
-
+```{r}
 vec_beta1 <- seq(0.1,1,by=0.1)
 loglik <- sapply(vec_beta1, function(beta1) {
   beta0 <- 15
@@ -291,7 +248,7 @@ multistart_result
 
 2. Code to generate results for Challenge 1
 
-(1) Input file
+(1) test cases
 ```{r}
 sim1_cases <- read.csv("sim1_cases_new.csv")
 sim1_cases
@@ -299,7 +256,12 @@ sim1_cases
 
 (2) Script
 
-```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60), code = readLines('sim1_code.R'), eval=FALSE}
+```{r, code = readLines('sim1_code.R'), eval=FALSE}
+```
+
+(3) simulated result
+```{r}
+read.csv('sim1_result.csv')
 ```
 
 3. Code to generate results for Challenge 2 (simulation from OU)
