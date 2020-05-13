@@ -1,6 +1,7 @@
-# state440-project
-Winter 2020 STAT 440 Final Project - smFRET modelling
+# stat440-project
+This is a repository for our STAT440 final project at the University of Waterloo.
 
-## TODOs:
+Authors: Karmei Koo, Wanxin Li, Jinhao Luo, Yi Xiang
 
-- [ ] organize code and remove backup data
+
+
