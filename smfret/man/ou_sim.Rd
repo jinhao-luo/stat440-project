@@ -34,3 +34,6 @@ It is a stationary Gaussian Markov process with transition density\preformatted{
 
 where \code{rho_t = exp(-gamma * t)} and \code{tau^2 = sigma^2/(2*gamma)}.  Its stationary distribution is \code{X_t ~ N(mu, tau^2)}.
 }
+\author{
+Martin Lysy \email{mlysy@uwaterloo.ca}
+}

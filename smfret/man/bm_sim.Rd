@@ -27,3 +27,6 @@ Generate observations from a Brownian motion with drift at regular time interval
 Brownian motion with drift is a Gaussian Markov process with transition density\preformatted{X_s+t | X_s ~ N(X_s + mu * t, sigma^2 * t).
 }
 }
+\author{
+Martin Lysy \email{mlysy@uwaterloo.ca}
+}

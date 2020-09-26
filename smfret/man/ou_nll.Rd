@@ -26,3 +26,6 @@ Negative loglikelihood for the Ornstein-Uhlenbeck model Xn.
 \details{
 For simplicity, the loglikelihood contribution of the first observation is ignored.
 }
+\author{
+Martin Lysy \email{mlysy@uwaterloo.ca}
+}

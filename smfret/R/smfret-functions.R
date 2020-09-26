@@ -1,5 +1,6 @@
 #' Generate observations from an Ornstein-Uhlenbeck process at regular time intervals.
 #'
+#' @author Martin Lysy \email{mlysy@@uwaterloo.ca}
 #' @param gamma Scalar mean reversion parameter (see **Details**).
 #' @param mu Scalar mean parameter (see **Details**).
 #' @param sigma Scalar diffusion parameter (see **Details**).
@@ -32,6 +33,7 @@ ou_sim <- function(gamma, mu, sigma, dt, n_obs, x0=mu) {
 
 #' Negative loglikelihood for the Ornstein-Uhlenbeck model Xn.
 #'
+#' @author Martin Lysy \email{mlysy@@uwaterloo.ca}
 #' @param gamma Scalar mean reversion parameter (see [ou_sim()]).
 #' @param mu Scalar mean parameter (see [ou_sim()]).
 #' @param sigma Scalar diffusion parameter (see [ou_sim()]).
@@ -72,6 +74,7 @@ ou_y_nll <- function(gamma, mu, sigma, b0, b1, Xt, Yt, dt) {
 
 #' Generate observations from a Brownian motion with drift at regular time intervals.
 #'
+#' @author Martin Lysy \email{mlysy@@uwaterloo.ca}
 #' @param mu Scalar drift parameter (see **Details**).
 #' @param sigma Scalar diffusion parameter (see **Details**).
 #' @param dt Interobservation time.
